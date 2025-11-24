@@ -178,8 +178,13 @@
 
       // Apply Logo
       if (settingsData.logoUrl) {
-        document.querySelectorAll('.navbar-logo, .login-logo').forEach(img => {
-          try { img.src = settingsData.logoUrl; } catch(e) {}
+        try { localStorage.setItem('appLogoUrl', settingsData.logoUrl); } catch(e) {}
+        document.querySelectorAll('.navbar-logo, .login-logo, .login-logo-inline').forEach(img => {
+          try {
+            img.src = settingsData.logoUrl;
+            img.style.display = '';
+            if (img.nextElementSibling) { img.nextElementSibling.style.display = 'none'; }
+          } catch(e) {}
         });
       }
     }).catch(error => { 

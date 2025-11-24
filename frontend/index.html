@@ -940,6 +940,13 @@
             margin-bottom: 20px;
             object-fit: contain;
         }
+        .login-logo-inline {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+        }
         
         /* ========================================
            SIDEBAR STYLES
@@ -6304,7 +6311,8 @@
                 
                 <!-- Hidden Admin Access Button (Secret) -->
                 <div class="text-center mb-3">
-                    <button type="button" class="btn btn-link text-muted" id="secretAccessBtn" style="font-size: 12px; opacity: 0.3;">
+                    <img src="logo.png" alt="Company Logo" class="login-logo-inline" onerror="this.style.display='none';">
+                    <button type="button" class="btn btn-link text-muted d-none" id="secretAccessBtn" style="font-size: 12px; opacity: 0.3;">
                         <i class="fas fa-key"></i>
                     </button>
                 </div>
@@ -36272,6 +36280,20 @@ sortedBranches.forEach(data => {
             if (window.api && typeof window.api.getSettings === 'function') {
                 const hasToken = !!localStorage.getItem('authToken');
                 if (hasToken) {
+                    // Apply saved logo from localStorage before auth call (affects login screen)
+                    try {
+                        const savedLogo = localStorage.getItem('appLogoUrl');
+                        if (savedLogo) {
+                            document.querySelectorAll('.navbar-logo, .login-logo, .login-logo-inline').forEach(img => {
+                                try {
+                                    img.src = savedLogo;
+                                    img.style.display = '';
+                                    if (img.nextElementSibling) { img.nextElementSibling.style.display = 'none'; }
+                                } catch(e) {}
+                            });
+                        }
+                    } catch(e) {}
+
                     window.api.getSettings().then(settingsData => {
                         if (settingsData && settingsData.theme) {
                             applyTheme(settingsData.theme);
@@ -36284,8 +36306,12 @@ sortedBranches.forEach(data => {
                         }
                         // Apply logo if available
                         if (settingsData && settingsData.logoUrl) {
-                            document.querySelectorAll('.navbar-logo, .login-logo').forEach(img => {
-                                try { img.src = settingsData.logoUrl; } catch(e) {}
+                            document.querySelectorAll('.navbar-logo, .login-logo, .login-logo-inline').forEach(img => {
+                                try {
+                                    img.src = settingsData.logoUrl;
+                                    img.style.display = '';
+                                    if (img.nextElementSibling) { img.nextElementSibling.style.display = 'none'; }
+                                } catch(e) {}
                             });
                         }
                     }).catch(err => {
