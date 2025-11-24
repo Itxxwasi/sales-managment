@@ -1,0 +1,75 @@
+<div id="category-voucher-simple-list-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Category Voucher List</h1>
+        <p class="dashboard-subtitle">View and manage category payment vouchers</p>
+    </div>
+    <div class="filter-section mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Search</label>
+                <input type="text" class="form-control" id="categoryVoucherSimpleSearch" placeholder="Search...">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Branch Filter</label>
+                <select class="form-select" id="categoryVoucherSimpleListBranchFilter">
+                    <option value="">All Branches</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Category Filter</label>
+                <select class="form-select" id="categoryVoucherSimpleListCategoryFilter">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Date Range</label>
+                <div class="d-flex gap-2">
+                    <input type="date" class="form-control" id="categoryVoucherSimpleListFromDate">
+                    <input type="date" class="form-control" id="categoryVoucherSimpleListToDate">
+                </div>
+            </div>
+        </div>
+        <div class="row g-3 mt-2">
+            <div class="col-md-12 d-flex justify-content-between">
+                <div>
+                    <button class="btn btn-primary" onclick="loadCategoryVoucherSimpleList()">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                    <button class="btn btn-secondary ms-2" onclick="clearCategoryVoucherSimpleFilters()">
+                        <i class="fas fa-times me-2"></i>Clear Filters
+                    </button>
+                </div>
+                <div>
+                    <button class="btn btn-info ms-2" onclick="printCategoryVoucherSimpleList()">
+                        <i class="fas fa-print me-2"></i>Print List
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Voucher #</th>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Branch</th>
+                            <th class="text-end">Amount</th>
+                            <th>Method</th>
+                            <th>Description</th>
+                            <th class="no-print">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryVoucherSimpleListTable">
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">Loading vouchers...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

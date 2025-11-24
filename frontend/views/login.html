@@ -1,0 +1,65 @@
+<div id="loginSection" class="login-section">
+    <div class="login-card">
+        <div class="login-header">
+            <img src="logo.png" alt="D.Watson Pharmacy" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h1 style="display:none;">D.Watson Pharmacy</h1>
+            <p>Sales Dashboard</p>
+        </div>
+        <div class="login-body">
+            <div class="auth-toggle mb-4">
+                <button type="button" class="toggle-btn active" id="loginToggle">Login</button>
+                <button type="button" class="toggle-btn d-none" id="signupToggle">Sign Up</button>
+            </div>
+            <div class="text-center mb-3">
+                <button type="button" class="btn btn-link text-muted" id="secretAccessBtn" style="font-size: 12px; opacity: 0.3;">
+                    <i class="fas fa-key"></i>
+                </button>
+            </div>
+            <form id="loginForm" class="auth-form">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                </div>
+                <div id="loginError" class="alert alert-danger d-none"></div>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+            <form id="signupForm" class="auth-form d-none">
+                <div class="mb-3">
+                    <label for="signupUsername" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="signupUsername" placeholder="Enter username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="signupFullName" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="signupFullName" placeholder="Enter your full name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="signupEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="signupPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="signupPassword" placeholder="Enter password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="signupConfirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Confirm password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="adminPassword" class="form-label">Admin Access Code</label>
+                    <input type="password" class="form-control" id="adminPassword" placeholder="Enter admin access code" required>
+                    <small class="form-text text-muted">Required for account creation</small>
+                </div>
+                <div id="signupError" class="alert alert-danger d-none"></div>
+                <button type="submit" class="login-btn">Create Admin Account</button>
+            </form>
+        </div>
+        <div class="login-footer">
+            <p>© Copyright D Watson. All Rights Reserved</p>
+            <p>Designed by Bilal Shah</p>
+        </div>
+    </div>
+</div>

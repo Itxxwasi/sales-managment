@@ -1,0 +1,137 @@
+<div id="settings-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Settings</h1>
+        <p class="dashboard-subtitle">Configure your dashboard preferences</p>
+    </div>
+    
+    <div id="permission-denied-banner-settings" class="permission-denied d-none">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>You need administrator privileges to access this section.</span>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">General Settings</h5>
+            <form id="settingsForm">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="companyName" class="form-label">Company Name</label>
+                        <input type="text" class="form-control" id="companyName" placeholder="D.Watson Group of Pharmacy">
+                        <div class="form-text">Display name for your company</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="currency" class="form-label">Currency</label>
+                        <select class="form-select" id="currency">
+                            <option value="">Select Currency</option>
+                            <option value="PKR">Pakistani Rupee (PKR)</option>
+                            <option value="USD">US Dollar (USD)</option>
+                            <option value="EUR">Euro (EUR)</option>
+                            <option value="GBP">British Pound (GBP)</option>
+                            <option value="AED">UAE Dirham (AED)</option>
+                            <option value="SAR">Saudi Riyal (SAR)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="dateFormat" class="form-label">Date Format</label>
+                        <select class="form-select" id="dateFormat">
+                            <option value="DD/MM/YYYY">DD/MM/YYYY (Day/Month/Year)</option>
+                            <option value="MM/DD/YYYY">MM/DD/YYYY (Month/Day/Year)</option>
+                            <option value="YYYY-MM-DD">YYYY-MM-DD (Year-Month-Day)</option>
+                            <option value="DD-MM-YYYY">DD-MM-YYYY (Day-Month-Year)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="itemsPerPageInput" class="form-label">Items Per Page</label>
+                        <input type="number" class="form-control" id="itemsPerPageInput" min="10" max="200" value="20">
+                        <div class="form-text">Number of items to display per page in tables</div>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="defaultCostPercent" class="form-label">Default Cost Percent</label>
+                        <input type="number" class="form-control" id="defaultCostPercent" min="0" max="100" step="0.01" placeholder="70">
+                        <div class="form-text">Default percentage used for cost calculations (e.g., 70 means 70% of sale price)</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="appThemeSelect" class="form-label">Theme</label>
+                        <select class="form-select" id="appThemeSelect">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="blue">Blue</option>
+                        </select>
+                        <div class="form-text">Application color theme</div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary" id="saveSettingsBtn">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Data Management</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-primary w-100" id="backupDataBtn">
+                        <i class="fas fa-download me-2"></i>Backup Data
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-secondary w-100" id="restoreDataBtn">
+                        <i class="fas fa-upload me-2"></i>Restore Data
+                    </button>
+                    <input type="file" id="restoreFile" accept=".json" style="display: none;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- API Keys Management Section (Admin Only) -->
+    <div class="card mt-4 admin-only" id="apiKeysSection">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-key me-2"></i>API Keys Management
+                </h5>
+                <button class="btn btn-primary" id="createApiKeyBtn">
+                    <i class="fas fa-plus me-2"></i>Create API Key
+                </button>
+            </div>
+            <p class="text-muted mb-4">
+                Generate API keys to allow external applications to access your data securely. API keys provide programmatic access without requiring user login.
+            </p>
+            <div id="apiKeysList" class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>API Key</th>
+                            <th>Status</th>
+                            <th>Usage</th>
+                            <th>Last Used</th>
+                            <th>Created</th>
+                            <th>Expires</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="apiKeysTableBody">
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Loading API keys...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

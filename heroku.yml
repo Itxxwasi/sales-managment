@@ -1,0 +1,12 @@
+# ========================================
+# Heroku Docker Configuration
+# This file tells Heroku to use Docker for deployment
+# ========================================
+
+build:
+  docker:
+    web: Dockerfile
+
+run:
+  web: node server/index.js
+

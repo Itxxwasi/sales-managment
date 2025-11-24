@@ -1,0 +1,60 @@
+{
+  "name": "D.Watson Pharmacy Dashboard",
+  "description": "Complete Sales Management System for Pharmacy with multi-branch support, role-based access control, and comprehensive reporting",
+  "repository": "https://github.com/Itxxwasi/DWATSON-DB",
+  "logo": "https://raw.githubusercontent.com/Itxxwasi/DWATSON-DB/main/logo.png",
+  "keywords": [
+    "pharmacy",
+    "sales",
+    "dashboard",
+    "management",
+    "nodejs",
+    "express",
+    "mongodb",
+    "multi-branch",
+    "inventory"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "MONGODB_URI": {
+      "description": "MongoDB connection string (mongodb:// or mongodb+srv://). Get from MongoDB Atlas or your MongoDB provider",
+      "value": "",
+      "required": true
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for JWT token encryption. Use a strong random string (min 32 characters recommended)",
+      "value": "",
+      "required": true
+    },
+    "ADMIN_PASSWORD": {
+      "description": "Admin password for user promotions and admin access",
+      "value": "",
+      "required": false
+    },
+    "NODE_ENV": {
+      "description": "Environment mode (production or development)",
+      "value": "production",
+      "required": false
+    },
+    "PORT": {
+      "description": "Server port (Heroku sets this automatically, but you can override)",
+      "value": "5000",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "scripts": {
+    "postdeploy": "echo '✅ D.Watson Pharmacy Dashboard deployed successfully!'"
+  },
+  "success_url": "/",
+  "addons": []
+}

@@ -1,0 +1,34 @@
+<div id="branches-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Branch Management</h1>
+        <p class="dashboard-subtitle">Manage your branches</p>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="section-title mb-0"><i class="fas fa-store"></i>Branches</h2>
+        <button class="btn btn-primary" id="addBranchBtn"><i class="fas fa-plus me-2"></i>Add Branch</button>
+    </div>
+    <div class="btn-group mb-3" role="group">
+        <button type="button" class="btn btn-sm btn-outline-primary active" id="branchCardViewBtn"><i class="fas fa-th me-1"></i>Card View</button>
+        <button type="button" class="btn btn-sm btn-outline-primary" id="branchTableViewBtn"><i class="fas fa-table me-1"></i>Table View</button>
+    </div>
+    <div id="branchCardView">
+        <div class="row" id="branchesContainer"></div>
+    </div>
+    <div id="branchTableView" style="display: none;">
+        <div class="table-responsive">
+            <table class="table table-hover" id="branchesTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="branchesTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>

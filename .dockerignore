@@ -1,0 +1,73 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Environment files (should be provided via environment variables or docker-compose)
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE and Editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker files
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Test files
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Build and dist folders (if any)
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Cursor specific
+.cursor/
+*.cursor/
+
+# Worktrees
+.git/worktrees/
+
+# Railway and deployment configs
+railway.json
+vercel.json
+Procfile
+app.json
+
+# Instructions and other text files
+*.txt
+SALES_ENTRY_INSTRUCTIONS.txt

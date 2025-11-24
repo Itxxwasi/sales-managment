@@ -1,0 +1,181 @@
+<div id="dashboard-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Sales Dashboard</h1>
+        <p class="dashboard-subtitle">Comprehensive overview of your pharmacy sales performance</p>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Dashboard Views</h5>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="warehouse-dashboard-tab" data-bs-toggle="tab" data-bs-target="#warehouse-dashboard-content" type="button" role="tab" aria-controls="warehouse-dashboard-content" aria-selected="true">
+                        <i class="fas fa-warehouse me-2"></i>Warehouse Dashboard
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="shop-dashboard-tab" data-bs-toggle="tab" data-bs-target="#shop-dashboard-content" type="button" role="tab" aria-controls="shop-dashboard-content" aria-selected="false">
+                        <i class="fas fa-store me-2"></i>Shop Dashboard
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="dashboardTabContent">
+                <div class="tab-pane fade show active" id="warehouse-dashboard-content" role="tabpanel" aria-labelledby="warehouse-dashboard-tab">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                            <h2 class="section-title mb-0">
+                                <i class="fas fa-th-large"></i>Category-Wise Breakdown by Branch
+                            </h2>
+                            <div class="d-flex gap-2 align-items-center">
+                                <select class="form-select d-none" id="warehouseCategoryBreakdownBranchFilter" style="min-width: 180px;">
+                                    <option value="">All Branches</option>
+                                </select>
+                                <button class="btn btn-primary circular-btn" id="warehouseFilterDashboardBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Filter by Branch">
+                                    <i class="fas fa-filter"></i>
+                                </button>
+                                <ul class="dropdown-menu" id="warehouseFilterDashboardDropdown" aria-labelledby="warehouseFilterDashboardBtn">
+                                    <li class="dropdown-item-text fw-bold">Filter by Branch:</li>
+                                    <li><hr class="dropdown-divider"></li>
+                                </ul>
+                                <button class="btn btn-primary circular-btn" id="warehouseMonthFilterBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Filter by Month">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </button>
+                                <ul class="dropdown-menu" id="warehouseMonthFilterDropdown" aria-labelledby="warehouseMonthFilterBtn">
+                                    <li class="dropdown-item-text fw-bold">Filter by Month:</li>
+                                    <li><hr class="dropdown-divider"></li>
+                                </ul>
+                                <input type="hidden" id="warehouseDashboardMonthFilter" value="">
+                                <button class="btn btn-primary circular-btn" id="warehouseDateRangeFilterBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Filter by Date Range">
+                                    <i class="fas fa-calendar-day"></i>
+                                </button>
+                                <ul class="dropdown-menu" id="warehouseDateRangeFilterDropdown" aria-labelledby="warehouseDateRangeFilterBtn">
+                                    <li class="dropdown-item-text fw-bold">Filter by Date Range:</li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item active" href="#" data-date-range="currentMonth"><i class="fas fa-calendar-alt me-2"></i>Current Month</a></li>
+                                    <li><a class="dropdown-item" href="#" data-date-range="weekly"><i class="fas fa-calendar-week me-2"></i>1st Week</a></li>
+                                    <li><a class="dropdown-item" href="#" data-date-range="first15"><i class="fas fa-calendar me-2"></i>First 15 Days</a></li>
+                                    <li><a class="dropdown-item" href="#" data-date-range="last15"><i class="fas fa-calendar me-2"></i>Last 15 Days</a></li>
+                                    <li><a class="dropdown-item" href="#" id="warehouseYesterdaySaleBtn" data-date-range="yesterday"><i class="fas fa-calendar-day me-2"></i>Yesterday Sale</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="dropdown-item-text fw-bold">Custom Date Range:</li>
+                                    <li>
+                                        <div class="px-3 py-2">
+                                            <div class="mb-2">
+                                                <label class="form-label small mb-1">From Date:</label>
+                                                <input type="date" class="form-control form-control-sm" id="warehouseDashboardTopDateFrom">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label small mb-1">To Date:</label>
+                                                <input type="date" class="form-control form-control-sm" id="warehouseDashboardTopDateTo">
+                                            </div>
+                                            <button class="btn btn-primary btn-sm w-100 mb-2" id="warehouseApplyCustomDateRangeBtn"><i class="fas fa-check me-1"></i>Apply</button>
+                                            <button class="btn btn-outline-secondary btn-sm w-100" id="warehouseClearCustomDateRangeBtn"><i class="fas fa-eraser me-1"></i>Clear Dates</button>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <input type="hidden" id="warehouseDashboardDateRangeFilter" value="currentMonth">
+                            </div>
+                        </div>
+                        <div class="row" id="warehouseBranchCardsContainer"></div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="section-title mb-0"><i class="fas fa-chart-bar"></i>Sales Comparison by Category & Branch</h2>
+                            <button class="btn btn-primary" id="warehouseRefreshComparisonChartBtn"><i class="fas fa-sync-alt me-2"></i>Refresh Chart</button>
+                        </div>
+                        <div class="card"><div class="card-body"><div class="chart-container"><canvas id="warehouseComparisonChart"></canvas></div></div></div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="section-title mb-0"><i class="fas fa-table"></i>Category & Branch Sales Comparison</h2>
+                            <button class="btn btn-primary" id="warehouseRefreshComparisonTableBtn"><i class="fas fa-sync-alt me-2"></i>Refresh</button>
+                        </div>
+                        <div id="warehouseDynamicCategoryTables"></div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                            <h2 class="section-title mb-0 flex-shrink-0"><i class="fas fa-file-invoice-dollar"></i>Payment Details</h2>
+                            <div class="dashboard-payment-filters-wrapper flex-grow-1">
+                                <div class="d-flex gap-2 align-items-center dashboard-payment-filters flex-wrap">
+                                    <select class="form-select form-select-sm" id="warehouseDashboardPaymentBranchFilter"><option value="">All Branches</option></select>
+                                    <select class="form-select form-select-sm" id="warehouseDashboardPaymentCategoryFilter"><option value="">All Categories</option></select>
+                                    <select class="form-select form-select-sm" id="warehouseDashboardPaymentDateFilter"><option value="currentMonth" selected>Current Month</option><option value="weekly">1st Week</option><option value="first15">First 15 Days</option><option value="last15">Last 15 Days</option><option value="custom">Custom Date Range</option></select>
+                                    <div id="warehouseDashboardPaymentCustomDateRange" class="d-none" style="display: flex; gap: 5px; align-items: center;">
+                                        <input type="date" class="form-control form-control-sm" id="warehouseDashboardPaymentDateFrom"><span class="text-muted small">to</span><input type="date" class="form-control form-control-sm" id="warehouseDashboardPaymentDateTo">
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" id="warehouseRefreshPaymentDetailsBtn"><i class="fas fa-sync-alt me-1"></i><span class="d-none d-lg-inline">Refresh</span></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4" id="warehouseDashboardPaymentSummaryCards">
+                            <div class="col-6 col-md-3 mb-3"><div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);"><div class="card-body"><h6 class="text-white mb-2">Total Sales</h6><h3 class="text-white mb-0" id="warehouseDashboardPaymentTotalSales">0</h3></div></div></div>
+                            <div class="col-6 col-md-3 mb-3"><div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #136F63 0%, #17a2b8 100%);"><div class="card-body"><h6 class="text-white mb-2">Total Cost</h6><h3 class="text-white mb-0" id="warehouseDashboardPaymentTotalCost">0</h3></div></div></div>
+                            <div class="col-6 col-md-3 mb-3"><div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);"><div class="card-body"><h6 class="text-white mb-2">Category Payments</h6><h3 class="text-white mb-0" id="warehouseDashboardPaymentCategoryPayments">0</h3></div></div></div>
+                            <div class="col-6 col-md-3 mb-3"><div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #CF2A2A 0%, #ff6b6b 100%);"><div class="card-body"><h6 class="text-white mb-2">Balance Payment</h6><h3 class="text-white mb-0" id="warehouseDashboardPaymentBalancePayment">0</h3></div></div></div>
+                        </div>
+                        <div class="card"><div class="card-body"><div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2"><div><h5 class="card-title mb-0">Payment Detail Report</h5><div id="warehouseDashboardPaymentSubtitle" class="text-muted small mt-1" style="display: none;"></div></div></div><div id="warehouseDashboardPaymentTableContainer"><div class="table-responsive"><table class="table table-hover"><thead id="warehouseDashboardPaymentTableHead" style="display: table-header-group;"><tr><th>Category</th><th>Branch</th><th>Sale</th><th>Cost</th><th>Category Payments</th><th>Balance Payment</th></tr></thead><tbody id="warehouseDashboardPaymentTableBody"><tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading payment data...</td></tr></tbody></table></div></div></div></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="shop-dashboard-content" role="tabpanel" aria-labelledby="shop-dashboard-tab">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                            <h2 class="section-title mb-0"><i class="fas fa-th-large"></i>Department & Sub-Department Breakdown by Branch</h2>
+                            <div class="d-flex gap-2 align-items-center">
+                                <select class="form-select d-none" id="shopCategoryBreakdownBranchFilter" style="min-width: 180px;"><option value="">All Branches</option></select>
+                                <button class="btn btn-primary circular-btn" id="shopFilterDashboardBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Filter by Branch"><i class="fas fa-filter"></i></button>
+                                <ul class="dropdown-menu" id="shopFilterDashboardDropdown" aria-labelledby="shopFilterDashboardBtn"><li class="dropdown-item-text fw-bold">Filter by Branch:</li><li><hr class="dropdown-divider"></li></ul>
+                                <button class="btn btn-primary circular-btn" id="shopMonthFilterBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Filter by Month"><i class="fas fa-calendar-alt"></i></button>
+                                <ul class="dropdown-menu" id="shopMonthFilterDropdown" aria-labelledby="shopMonthFilterBtn"><li class="dropdown-item-text fw-bold">Filter by Month:</li><li><hr class="dropdown-divider"></li></ul>
+                                <input type="hidden" id="shopDashboardMonthFilter" value="">
+                                <button class="btn btn-primary circular-btn" id="shopDateRangeFilterBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Filter by Date Range"><i class="fas fa-calendar-day"></i></button>
+                                <ul class="dropdown-menu" id="shopDateRangeFilterDropdown" aria-labelledby="shopDateRangeFilterBtn">
+                                    <li class="dropdown-item-text fw-bold">Filter by Date Range:</li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item active" href="#" data-date-range="currentMonth"><i class="fas fa-calendar-alt me-2"></i>Current Month</a></li>
+                                    <li><a class="dropdown-item" href="#" data-date-range="weekly"><i class="fas fa-calendar-week me-2"></i>1st Week</a></li>
+                                    <li><a class="dropdown-item" href="#" data-date-range="first15"><i class="fas fa-calendar me-2"></i>First 15 Days</a></li>
+                                    <li><a class="dropdown-item" href="#" data-date-range="last15"><i class="fas fa-calendar me-2"></i>Last 15 Days</a></li>
+                                    <li><a class="dropdown-item" href="#" id="shopYesterdaySaleBtn" data-date-range="yesterday"><i class="fas fa-calendar-day me-2"></i>Yesterday Sale</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="dropdown-item-text fw-bold">Custom Date Range:</li>
+                                    <li>
+                                        <div class="px-3 py-2">
+                                            <div class="mb-2">
+                                                <label class="form-label small mb-1">From Date:</label>
+                                                <input type="date" class="form-control form-control-sm" id="shopDashboardTopDateFrom">
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label small mb-1">To Date:</label>
+                                                <input type="date" class="form-control form-control-sm" id="shopDashboardTopDateTo">
+                                            </div>
+                                            <button class="btn btn-primary btn-sm w-100 mb-2" id="shopApplyCustomDateRangeBtn"><i class="fas fa-check me-1"></i>Apply</button>
+                                            <button class="btn btn-outline-secondary btn-sm w-100" id="shopClearCustomDateRangeBtn"><i class="fas fa-eraser me-1"></i>Clear Dates</button>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <input type="hidden" id="shopDashboardDateRangeFilter" value="yesterday">
+                                <button class="btn btn-primary circular-btn" id="shopSortBySaleBtn" data-bs-toggle="dropdown" aria-expanded="false" title="Sort by Sale"><i class="fas fa-sort-amount-down"></i></button>
+                                <ul class="dropdown-menu" id="shopSortBySaleDropdown" aria-labelledby="shopSortBySaleBtn"><li class="dropdown-item-text fw-bold">Sort Branches by Sale:</li><li><hr class="dropdown-divider"></li><li><a class="dropdown-item active" href="#" data-sort="net-sale-desc" id="shopSortNetSaleDesc"><i class="fas fa-sort-amount-down me-2"></i>Net Sale (Highest First)</a></li><li><a class="dropdown-item" href="#" data-sort="net-sale-asc" id="shopSortNetSaleAsc"><i class="fas fa-sort-amount-up me-2"></i>Net Sale (Lowest First)</a></li><li><a class="dropdown-item" href="#" data-sort="gross-sale-desc" id="shopSortGrossSaleDesc"><i class="fas fa-sort-amount-down me-2"></i>Gross Sale (Highest First)</a></li><li><a class="dropdown-item" href="#" data-sort="gross-sale-asc" id="shopSortGrossSaleAsc"><i class="fas fa-sort-amount-up me-2"></i>Gross Sale (Lowest First)</a></li><li><hr class="dropdown-divider"></li><li><a class="dropdown-item" href="#" data-sort="none" id="shopSortNone"><i class="fas fa-sort me-2"></i>No Sort (Original Order)</a></li></ul>
+                                <input type="hidden" id="shopDashboardSortBySale" value="net-sale-desc">
+                            </div>
+                        </div>
+                        <div class="row" id="shopBranchCardsContainer"></div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="section-title mb-0"><i class="fas fa-chart-line"></i>Branch Wise Net Sales Comparison</h2><button class="btn btn-primary" id="shopRefreshBranchChartBtn"><i class="fas fa-sync-alt me-2"></i>Refresh Chart</button></div>
+                        <div class="card"><div class="card-body"><div class="chart-container"><canvas id="shopBranchComparisonChart"></canvas></div></div></div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="section-title mb-0"><i class="fas fa-table"></i>Branch Wise Sale Comparison</h2></div>
+                        <div class="card"><div class="card-body"><div class="table-responsive"><table class="table table-bordered table-hover"><thead class="table-light"><tr><th class="text-center">Rank</th><th>Branch</th><th class="text-end">Gross Sale</th><th class="text-end">Discount Value</th><th class="text-end">Discount %</th><th class="text-end">Return</th><th class="text-end">Sale Value</th><th class="text-end">GST</th><th class="text-end">Net Sale</th><th class="text-end">Daily Sale Average</th></tr></thead><tbody id="shopBranchWiseComparisonTableBody"><tr><td colspan="10" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading branch comparison data...</td></tr></tbody></table></div></div></div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="section-title mb-0"><i class="fas fa-building"></i>Branch Wise Sale</h2></div>
+                        <div class="card mb-4"><div class="card-body"><div class="d-flex justify-content-between align-items-center mb-3"><div><h5 class="card-title mb-0">Department Wise Report</h5></div><button class="btn btn-success no-print" id="printShopDashboardDeptWiseReportBtn"><i class="fas fa-print me-2"></i>Print Report</button></div><div id="shopDashboardDeptWiseReportTablesContainer"><div class="text-center text-muted py-4"><i class="fas fa-info-circle me-2"></i>Loading department sales data...</div></div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+{
+  "name": "dwatson-pharmacy-dashboard",
+  "version": "1.0.0",
+  "description": "D.Watson Pharmacy Sales Dashboard - Complete management system",
+  "main": "server/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.3",
+    "morgan": "^1.10.0"
+  },
+  "keywords": [
+    "pharmacy",
+    "sales",
+    "dashboard",
+    "management",
+    "itxxwasi",
+    "wasimd",
+    "wasidev",
+    "wasi tech",
+    "wasi tech bot",
+    "wasi-x",
+    "itxxwasi github"
+  ],
+  "author": "MR Wasi",
+  "license": "ISC"
+}

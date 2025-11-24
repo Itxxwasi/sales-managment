@@ -1,0 +1,589 @@
+<div id="employees-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">
+            <i class="fas fa-user-tie me-2"></i>Employees Registration
+            <button class="btn btn-sm btn-outline-light ms-2" onclick="if(typeof loadEmployees === 'function') loadEmployees()" title="Refresh">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </h1>
+        <p class="dashboard-subtitle">Manage employee registration and details</p>
+    </div>
+    
+    <div id="permission-denied-banner-employees" class="permission-denied d-none">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>You need payroll module permission to access this section.</span>
+    </div>
+    
+    <div class="row g-3">
+        <!-- Left Column: Employee Profile -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Employee Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form id="employeeForm">
+                        <div class="mb-3">
+                            <label class="form-label">Code</label>
+                            <input type="text" class="form-control" id="employeeCode" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" id="employeeName" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Father/Mother</label>
+                            <input type="text" class="form-control" id="employeeFatherMother">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">CNIC</label>
+                            <input type="text" class="form-control" id="employeeCNIC" placeholder="XXXXX-XXXXXXX-X">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Branch</label>
+                            <select class="form-select" id="employeeBranch">
+                                <option value="">Select Branches</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <div class="input-group">
+                                <select class="form-select" id="employeeDepartment">
+                                    <option value="">Select Department</option>
+                                </select>
+                                <button type="button" class="btn btn-primary" onclick="if(typeof showEmployeeDepartmentModal === 'function') showEmployeeDepartmentModal()" title="Manage Departments">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning" onclick="if(typeof loadEmployeeDepartments === 'function') loadEmployeeDepartments()" title="Refresh">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Designation</label>
+                            <div class="input-group">
+                                <select class="form-select" id="employeeDesignation">
+                                    <option value="">Select Designation</option>
+                                </select>
+                                <button type="button" class="btn btn-primary" onclick="if(typeof showEmployeeDesignationModal === 'function') showEmployeeDesignationModal()" title="Manage Designations">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-warning" onclick="if(typeof loadEmployeeDesignations === 'function') loadEmployeeDesignations()" title="Refresh">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea class="form-control" id="employeeAddress" rows="2"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Acc No</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="employeeAccNo" readonly style="background-color: #e9ecef; cursor: not-allowed;">
+                                <select class="form-select" id="employeeBankSelect" style="max-width: 150px;">
+                                    <option value="">Select Bank</option>
+                                    <option value="HBL">HBL</option>
+                                    <option value="ALF">ALF</option>
+                                    <option value="BOP">BOP</option>
+                                    <option value="BIP">BIP</option>
+                                    <option value="BAHL">BAHL</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Mobile No</label>
+                            <input type="text" class="form-control" id="employeeMobileNo">
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">DOB</label>
+                                <input type="date" class="form-control" id="employeeDOB">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Joining Date</label>
+                                <input type="date" class="form-control" id="employeeJoiningDate">
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Issue Date</label>
+                                <input type="date" class="form-control" id="employeeIssueDate">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Expiry Date</label>
+                                <input type="date" class="form-control" id="employeeExpiryDate">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Incr Date</label>
+                            <input type="date" class="form-control" id="employeeIncrDate">
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Gender</label>
+                                <select class="form-select" id="employeeGender">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Religion</label>
+                                <select class="form-select" id="employeeReligion">
+                                    <option value="Islam">Islam</option>
+                                    <option value="Christianity">Christianity</option>
+                                    <option value="Hinduism">Hinduism</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="employeeSalesman">
+                                <label class="form-check-label" for="employeeSalesman">Salesman</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="employeeActive" checked>
+                                <label class="form-check-label" for="employeeActive">Active</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Image Upload</label>
+                            <input type="file" class="form-control" id="employeeImage" accept="image/*">
+                            <div class="mt-2">
+                                <img id="employeeImagePreview" src="" alt="Employee Image" style="max-width: 100px; max-height: 100px; display: none; border: 1px solid #ddd; padding: 5px;">
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2 align-items-center">
+                            <button type="button" class="btn btn-primary" id="saveEmployeeBtn" onclick="if(typeof saveEmployee === 'function') saveEmployee()">
+                                <i class="fas fa-save me-2"></i>Save
+                            </button>
+                            <button type="button" class="btn btn-danger" onclick="if(typeof clearEmployeeForm === 'function') clearEmployeeForm()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <button type="button" class="btn btn-success" id="employeeListBtn" onclick="if(typeof showSection === 'function') showSection('employee-list')" style="display: none;">
+                                <i class="fas fa-list me-2"></i>Employee List
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Middle Column: Fix and Duty -->
+        <div class="col-lg-4">
+            <!-- Fix (Salary/Allowance) Section -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Fix</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Opening</label>
+                        <input type="number" class="form-control" id="employeeOpening" step="0.01" value="0">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Salary</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="employeeSalary" step="0.01" value="0">
+                            <select class="form-select" id="employeeSalaryPeriod" style="max-width: 120px;">
+                                <option value="Per Month">Per Month</option>
+                                <option value="Per Week">Per Week</option>
+                                <option value="Per Day">Per Day</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Fix Allowance</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="employeeFixAllowance" step="0.01" value="0">
+                            <span class="input-group-text">ST.Less Allowance</span>
+                            <input type="number" class="form-control" id="employeeStLessAllowance" step="0.01" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Other Allowances</label>
+                        <input type="number" class="form-control" id="employeeOtherAllowances" step="0.01" value="0">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeCommEmp">
+                            <label class="form-check-label" for="employeeCommEmp">Comm Emp</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Allow Food</label>
+                        <div class="input-group">
+                            <select class="form-select" id="employeeAllowFood">
+                                <option value="No Food">No Food</option>
+                                <option value="Yes">Yes</option>
+                            </select>
+                            <span class="input-group-text">Per Time Food Rs</span>
+                            <input type="number" class="form-control" id="employeePerTimeFoodRs" step="0.01" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Bank Cash</label>
+                        <input type="number" class="form-control" id="employeeBankCash" step="0.01" value="0">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Security Deposit</label>
+                        <input type="number" class="form-control" id="employeeSecurityDeposit" step="0.01" value="0">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Deduction</label>
+                        <input type="number" class="form-control" id="employeeDeduction" step="0.01" value="0">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Duty Section -->
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Duty</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">F.DutyTime</label>
+                        <div class="input-group">
+                            <input type="time" class="form-control" id="employeeFDutyTime">
+                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">T.DutyTime</label>
+                        <div class="input-group">
+                            <input type="time" class="form-control" id="employeeTDutyTime">
+                            <span class="input-group-text"><i class="fas fa-clock"></i></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Off Day</label>
+                        <select class="form-select" id="employeeOffDay">
+                            <option value="Sunday">Sunday</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Total Hrs</label>
+                        <input type="number" class="form-control" id="employeeTotalHrs" step="0.01" value="0" readonly style="background-color: #e9ecef; cursor: not-allowed;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Access Controls and Bank Details -->
+        <div class="col-lg-4">
+            <!-- Employee Access Controls -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Employee Access Controls</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeAllowOvertime" checked>
+                            <label class="form-check-label" for="employeeAllowOvertime">Allow Overtime</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeOtstThirtyWorkingDays">
+                            <label class="form-check-label" for="employeeOtstThirtyWorkingDays">OTST_ThirtyWorkingDays</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeEobi">
+                            <label class="form-check-label" for="employeeEobi">EOBI</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeePayFullSalaryThroughBank">
+                            <label class="form-check-label" for="employeePayFullSalaryThroughBank">Pay_FullSalary_Through_Bank</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeElectricityBill">
+                            <label class="form-check-label" for="employeeElectricityBill">ElectricityBill</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeThirtyWorkingDays">
+                            <label class="form-check-label" for="employeeThirtyWorkingDays">Thirty Working Days</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeAllowEmployeeAdvances" checked>
+                            <label class="form-check-label" for="employeeAllowEmployeeAdvances">Allow Employee Advances</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeAllowRottiPerks">
+                            <label class="form-check-label" for="employeeAllowRottiPerks">Allow Rotti Perks</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeDontAllowRottiPerks">
+                            <label class="form-check-label" for="employeeDontAllowRottiPerks">Dont Allow Rotti Perks</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeAllowNashtaPerks">
+                            <label class="form-check-label" for="employeeAllowNashtaPerks">Allow Nashta Perks</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="employeeDontAllowNashtaPerks">
+                            <label class="form-check-label" for="employeeDontAllowNashtaPerks">Dont Allow Nashta Perks</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Rotti Times</label>
+                        <input type="text" class="form-control" id="employeeRottiTimes">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Employee Bank Details -->
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-university me-2"></i>Employee Bank Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">HBL</label>
+                        <input type="text" class="form-control" id="employeeHBL">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">ALF</label>
+                        <input type="text" class="form-control" id="employeeALF">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">BOP</label>
+                        <input type="text" class="form-control" id="employeeBOP">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">BIP</label>
+                        <input type="text" class="form-control" id="employeeBIP">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">BAHL</label>
+                        <input type="text" class="form-control" id="employeeBAHL">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Employee List Modal - Removed: Now using full-page employee-list section -->
+    
+    <!-- Employee Department Management Modal -->
+    <div class="modal fade" id="employeeDepartmentModal" tabindex="-1" aria-labelledby="employeeDepartmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="employeeDepartmentModalLabel">Manage Employee Departments</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add/Edit Form -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0" id="employeeDepartmentFormTitle">Add New Department</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="employeeDepartmentForm">
+                                <input type="hidden" id="employeeDepartmentId">
+                                <div class="mb-3">
+                                    <label class="form-label">Department Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="employeeDepartmentName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" id="employeeDepartmentDescription" rows="2"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="employeeDepartmentActive" checked>
+                                        <label class="form-check-label" for="employeeDepartmentActive">Active</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-primary" id="saveEmployeeDepartmentBtn" onclick="if(typeof saveEmployeeDepartment === 'function') saveEmployeeDepartment()">
+                                        <i class="fas fa-save me-2"></i>Save
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="if(typeof resetEmployeeDepartmentForm === 'function') resetEmployeeDepartmentForm()">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Department List -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Department List</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="employeeDepartmentListBody">
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">Loading departments...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Employee Designation Management Modal -->
+    <div class="modal fade" id="employeeDesignationModal" tabindex="-1" aria-labelledby="employeeDesignationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="employeeDesignationModalLabel">Manage Employee Designations</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Add/Edit Form -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0" id="employeeDesignationFormTitle">Add New Designation</h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="employeeDesignationForm">
+                                <input type="hidden" id="employeeDesignationId">
+                                <div class="mb-3">
+                                    <label class="form-label">Designation Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="employeeDesignationName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" id="employeeDesignationDescription" rows="2"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="employeeDesignationActive" checked>
+                                        <label class="form-check-label" for="employeeDesignationActive">Active</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-primary" id="saveEmployeeDesignationBtn" onclick="if(typeof saveEmployeeDesignation === 'function') saveEmployeeDesignation()">
+                                        <i class="fas fa-save me-2"></i>Save
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="if(typeof resetEmployeeDesignationForm === 'function') resetEmployeeDesignationForm()">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Designation List -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Designation List</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="employeeDesignationListBody">
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">Loading designations...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,226 @@
+================================================================================
+                    SALES ENTRY INSTRUCTIONS FOR EMPLOYEES
+                    D.Watson Pharmacy Sales Dashboard
+================================================================================
+
+HOW TO ACCESS SALES ENTRY:
+---------------------------
+1. Open the Sales Dashboard in your web browser
+2. Login with your username and password
+3. Click on "Sales Entry" in the left sidebar menu
+
+
+================================================================================
+                        WAREHOUSE SALE ENTRY
+                        (Category-Based Sales)
+================================================================================
+
+STEP 1: SELECT THE WAREHOUSE SALE TAB
+-------------------------------------
+- Click on the "Warehouse Sale" tab at the top of the sales entry form
+- This tab has a warehouse icon (📦)
+
+STEP 2: FILL IN BASIC INFORMATION
+----------------------------------
+1. Select Date:
+   - Click on the Date field
+   - Choose the date for which you are entering sales
+   - Default is today's date
+
+2. Select Branch:
+   - Click on the Branch dropdown
+   - Select your branch (e.g., "D WATSON PWD", "D WATSON G 15", etc.)
+   - IMPORTANT: You can only select branches you have access to
+
+STEP 3: ENTER SALES BY CATEGORY
+--------------------------------
+- You will see input fields for each category (e.g., COSTMAIES, MEDICINE, etc.)
+- For each category, enter:
+  * Sales Amount: Enter the total sales amount for that category
+  * Cost Amount: Enter the total cost for that category
+- Leave fields as 0 (zero) if there are no sales for that category
+
+STEP 4: CHECK TOTALS
+--------------------
+- The form automatically calculates:
+  * Total Sales (sum of all category sales)
+  * Total Cost (sum of all category costs)
+  * Total Profit (Total Sales - Total Cost)
+
+STEP 5: ADD NOTES (OPTIONAL)
+-----------------------------
+- You can add any notes or comments in the Notes field
+- This is optional but helpful for reference
+
+STEP 6: SAVE THE SALE
+---------------------
+- Click the "Save Sale" button
+- You will see a success message
+- The sales list will automatically open showing your entry
+
+
+================================================================================
+                          SHOP SALE ENTRY
+                    (Department/Sub-Department Sales)
+================================================================================
+
+STEP 1: SELECT THE SHOP SALE TAB
+---------------------------------
+- Click on the "Shop Sale" tab at the top of the sales entry form
+- This tab has a shop icon (🏪)
+
+STEP 2: FILL IN BASIC INFORMATION
+----------------------------------
+1. Select Date:
+   - Click on the Date field
+   - Choose the date for which you are entering sales
+   - Default is today's date
+
+2. Select Branch:
+   - Click on the Branch dropdown
+   - Select your branch
+   - IMPORTANT: You can only select branches you have access to
+
+3. Select Department:
+   - After selecting branch, the Department dropdown will load
+   - Select the department (e.g., "COSMATICES", etc.)
+
+STEP 3: ENTER SUB-DEPARTMENT SALES
+-----------------------------------
+- After selecting department, sub-departments will appear in a table
+- For each sub-department, enter:
+  * Gross Sale: Enter the total gross sale amount
+  * Discount: Enter discount amount (if any)
+  * Return: Enter return amount (if any)
+  * GST: Enter GST amount (if any)
+- The system automatically calculates:
+  * Sale Value = Gross Sale - Discount
+  * Net Sale = Sale Value - Return + GST
+
+STEP 4: SAVE THE SALE
+---------------------
+- Click the "Save Bulk Department Sales" button
+- You will see a success message
+- The department sales list will automatically open
+
+
+================================================================================
+                          VIEWING SALES LIST
+================================================================================
+
+TO VIEW SALES YOU ENTERED:
+---------------------------
+1. After saving, the sales list opens automatically
+2. Or click "View Sales List" button in the Warehouse Sale tab
+3. Or click "View Department Sales List" button in the Shop Sale tab
+
+FILTERING SALES:
+----------------
+- Select "From Date" and "To Date" to filter by date range
+- Select Branch to filter by specific branch
+- Select Category/Department to filter by category or department
+- Click "Apply Filter" to see filtered results
+
+VIEW OPTIONS:
+-------------
+- Card View: Shows sales as cards (default)
+- Table View: Shows sales in a table format
+- Click the buttons to switch between views
+
+
+================================================================================
+                          EDITING A SALE
+================================================================================
+
+IF YOU MADE A MISTAKE:
+----------------------
+1. Go to the Sales List (Card View or Table View)
+2. Find the sale you want to edit
+3. Click the "Edit" button (blue button with pencil icon)
+4. A modal/form will open with the sale data
+5. Make your changes
+6. Click "Update Sale" button
+7. The sale will be updated
+
+
+================================================================================
+                          DELETING A SALE
+================================================================================
+
+TO DELETE A SALE:
+-----------------
+1. Go to the Sales List
+2. Find the sale you want to delete
+3. Click the "Delete" button (red button with trash icon)
+4. Confirm the deletion when prompted
+5. The sale will be permanently deleted
+
+WARNING: Deletion cannot be undone. Make sure you want to delete before confirming.
+
+
+================================================================================
+                        COMMON ISSUES & SOLUTIONS
+================================================================================
+
+ISSUE: "Please select a branch before saving"
+SOLUTION: Make sure you have selected a branch from the dropdown
+
+ISSUE: "Please select a date before saving"
+SOLUTION: Make sure you have selected a date
+
+ISSUE: Branch dropdown is empty
+SOLUTION: Contact your administrator - you may not have access to any branches
+
+ISSUE: Department dropdown is empty
+SOLUTION: Make sure you have selected a branch first, then the department will load
+
+ISSUE: Sub-departments not showing
+SOLUTION: Make sure you have selected both branch and department first
+
+ISSUE: Cannot edit/delete a sale
+SOLUTION: You may not have permission. Contact your administrator
+
+ISSUE: Numbers not showing properly when zoomed out
+SOLUTION: This has been fixed. Refresh the page if you still see issues
+
+
+================================================================================
+                          IMPORTANT REMINDERS
+================================================================================
+
+✓ Always select the correct date for the sale
+✓ Always select the correct branch
+✓ Double-check your numbers before saving
+✓ Enter sales daily - don't wait to enter multiple days at once
+✓ If you make a mistake, you can edit or delete the sale
+✓ Contact your administrator if you need help or have questions
+
+================================================================================
+                          QUICK REFERENCE
+================================================================================
+
+WAREHOUSE SALE:
+1. Select Warehouse Sale tab
+2. Select Date and Branch
+3. Enter sales amounts for each category
+4. Click "Save Sale"
+
+SHOP SALE:
+1. Select Shop Sale tab
+2. Select Date, Branch, and Department
+3. Enter sales for each sub-department
+4. Click "Save Bulk Department Sales"
+
+VIEW SALES:
+- Click "View Sales List" or "View Department Sales List"
+- Use filters to find specific sales
+- Switch between Card View and Table View
+
+EDIT/DELETE:
+- Click Edit button to modify a sale
+- Click Delete button to remove a sale (with confirmation)
+
+================================================================================
+                    END OF INSTRUCTIONS
+================================================================================
+

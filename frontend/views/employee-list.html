@@ -1,0 +1,129 @@
+<div id="employee-list-section" class="content-section">
+    <!-- Blue Header Bar -->
+    <div class="employee-list-header" style="background: linear-gradient(135deg, #2c6e8a 0%, #1e4d63 100%); padding: 15px 20px; margin: -15px -15px 20px -15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-link text-white p-0" style="font-size: 1.2rem;" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="mb-0 text-white" style="font-size: 1.5rem; font-weight: 600;">
+                <i class="fas fa-users me-2"></i>Employee List
+            </h1>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-link text-white p-1" onclick="if(typeof loadEmployeeListPage === 'function') loadEmployeeListPage()" title="Refresh">
+                <i class="fas fa-sync-alt" style="font-size: 1.1rem;"></i>
+            </button>
+            <div class="d-flex align-items-center gap-2 text-white">
+                <div class="rounded-circle bg-white text-primary d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-weight: 600;">
+                    <span id="employeeListUserInitial">B</span>
+                </div>
+                <span id="employeeListUserName" style="font-weight: 500;">Bilal Shah</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="permission-denied-banner-employee-list" class="permission-denied d-none">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>You need payroll module permission to access this section.</span>
+    </div>
+    
+    <!-- Filter/Search Bar with Light Gray Background -->
+    <div class="card mb-3" style="background-color: #f5f5f5; border: none;">
+        <div class="card-body" style="padding: 15px;">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <button class="btn btn-danger" onclick="if(typeof showSection === 'function') showSection('employees')" style="font-weight: 500;">
+                        <i class="fas fa-plus me-2"></i>Add Employee
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Branch</label>
+                    <select class="form-select form-select-sm" id="employeeListBranchFilter">
+                        <option value="">Select Branch</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Department</label>
+                    <select class="form-select form-select-sm" id="employeeListDepartmentFilter">
+                        <option value="">Select Department</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Designation</label>
+                    <select class="form-select form-select-sm" id="employeeListDesignationFilter">
+                        <option value="">Select Designation</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Employee</label>
+                    <select class="form-select form-select-sm" id="employeeListEmployeeFilter">
+                        <option value="">All Emp</option>
+                        <option value="commission">Commission Emp</option>
+                        <option value="bank">Bank Emp</option>
+                        <option value="cash">Cash Emp</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Religion</label>
+                    <select class="form-select form-select-sm" id="employeeListReligionFilter">
+                        <option value="">All Religion</option>
+                        <option value="Islam">Islam</option>
+                        <option value="Christianity">Christianity</option>
+                        <option value="Hinduism">Hinduism</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label small fw-semibold">Search</label>
+                    <input type="text" class="form-control form-control-sm" id="employeeListGlobalSearch" placeholder="Search anything...">
+                </div>
+                <div class="col-md-auto d-flex gap-2 flex-wrap align-items-end">
+                    <button class="btn btn-primary btn-sm" onclick="if(typeof printEmployeeList === 'function') printEmployeeList()" style="font-weight: 500;">
+                        <i class="fas fa-print me-1"></i>Print
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="if(typeof showEmployeeRanking === 'function') showEmployeeRanking()" style="font-weight: 500;">
+                        <i class="fas fa-trophy me-1"></i>Employee Ranking
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Employee List Table -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive" style="max-height: calc(100vh - 300px); overflow-y: auto;">
+                <table class="table table-bordered table-hover table-sm mb-0" id="employeeListTable">
+                    <thead class="table-light sticky-top">
+                        <tr>
+                            <th style="width: 50px;">SrNo</th>
+                            <th style="width: 180px;">Code</th>
+                            <th style="width: 100px;">Branch</th>
+                            <th style="min-width: 150px;">Name</th>
+                            <th style="width: 150px;">CNIC</th>
+                            <th style="width: 120px;">Designation</th>
+                            <th style="width: 120px;">Department</th>
+                            <th style="width: 150px;">Acc No</th>
+                            <th style="width: 100px;">Bank</th>
+                            <th style="width: 100px;">Duty Hours</th>
+                            <th style="width: 120px;">Increment Date</th>
+                            <th style="width: 100px;">Salary</th>
+                            <th style="width: 100px;">Commission</th>
+                            <th style="width: 120px;">Fix Allowance</th>
+                            <th style="width: 120px;">ST.Less Allowance</th>
+                            <th style="width: 80px;">Active</th>
+                            <th style="width: 80px;">PFSTB</th>
+                            <th style="width: 80px;">EOBI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeListTableBody">
+                        <tr>
+                            <td colspan="18" class="text-center text-muted py-4">Loading employees...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

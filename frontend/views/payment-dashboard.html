@@ -1,0 +1,126 @@
+<div id="payment-dashboard-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Payment Dashboard</h1>
+        <p class="dashboard-subtitle">Comprehensive overview of payment vouchers and supplier payments</p>
+    </div>
+    <div class="filter-section">
+        <div class="row g-3">
+            <div class="col-12 col-md-4">
+                <label class="form-label">Select Branch</label>
+                <select class="form-select" id="paymentDashboardBranchFilter">
+                    <option value="">All Branches</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label">Select Supplier</label>
+                <select class="form-select" id="paymentDashboardSupplierFilter">
+                    <option value="">All Suppliers</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label">Date Range</label>
+                <select class="form-select" id="paymentDashboardDateFilter">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30">Last 30 Days</option>
+                    <option value="90">Last 3 Months</option>
+                    <option value="365">Last Year</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-lg-2 col-md-4 mb-3">
+            <div id="cardCashPaid" class="card text-center border-0 shadow-sm" style="cursor:pointer;background: linear-gradient(135deg, #1cc88a 0%, #20c997 100%);">
+                <div class="card-body">
+                    <h3 class="text-white mb-0" id="paymentCashAmount">0</h3>
+                    <p class="text-white mb-0">Cash Paid</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 mb-3">
+            <div id="cardBankPaid" class="card text-center border-0 shadow-sm" style="cursor:pointer;background: linear-gradient(135deg, #36b9cc 0%, #17a2b8 100%);">
+                <div class="card-body">
+                    <h3 class="text-white mb-0" id="paymentBankAmount">0</h3>
+                    <p class="text-white mb-0">Bank Transfer Paid</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 mb-3">
+            <div id="cardChequePaid" class="card text-center border-0 shadow-sm" style="cursor:pointer;background: linear-gradient(135deg, #f6c23e 0%, #f39c12 100%);">
+                <div class="card-body">
+                    <h3 class="text-white mb-0" id="paymentChequeAmount">0</h3>
+                    <p class="text-white mb-0">Cheque Paid</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 mb-3">
+            <div id="cardOnlinePaid" class="card text-center border-0 shadow-sm" style="cursor:pointer;background: linear-gradient(135deg, #e83e8c 0%, #d63384 100%);">
+                <div class="card-body">
+                    <h3 class="text-white mb-0" id="paymentOnlineAmount">0</h3>
+                    <p class="text-white mb-0">Online Paid</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-8 mb-3">
+            <div id="cardTotalPaid" class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #4e73df 0%, #667eea 100%);">
+                <div class="card-body">
+                    <h3 class="text-white mb-0" id="paymentTotalAmount">0</h3>
+                    <p class="text-white mb-0">Total Paid</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Payment Trends</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="paymentTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Supplier Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="paymentSupplierChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Recent Vouchers</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Voucher #</th>
+                            <th>Date</th>
+                            <th>Supplier</th>
+                            <th>Branch</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentRecentVouchersTable">
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No vouchers found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,169 @@
+<div id="payment-voucher-list-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Voucher List</h1>
+        <p class="dashboard-subtitle">View and manage payment vouchers</p>
+    </div>
+    <ul class="nav nav-tabs mb-3" id="voucherListTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="supplier-voucher-list-tab" data-bs-toggle="tab" data-bs-target="#supplier-voucher-list-content" type="button" role="tab">
+                <i class="fas fa-truck me-2"></i>Supplier Vouchers
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="category-voucher-list-tab" data-bs-toggle="tab" data-bs-target="#category-voucher-list-content" type="button" role="tab">
+                <i class="fas fa-tags me-2"></i>Category Vouchers
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="voucherListTabContent">
+        <div class="tab-pane fade show active" id="supplier-voucher-list-content" role="tabpanel">
+            <div class="filter-section mb-4">
+                <div class="row g-2">
+                    <div class="col-6 col-md">
+                        <label class="form-label small">Search</label>
+                        <input type="text" class="form-control form-control-sm" id="paymentVoucherSearch" placeholder="Search...">
+                    </div>
+                    <div class="col-6 col-md">
+                        <label class="form-label small">Branch Filter</label>
+                        <select class="form-select form-select-sm" id="paymentVoucherListBranchFilter">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md">
+                        <label class="form-label small">Supplier Filter</label>
+                        <select class="form-select form-select-sm" id="paymentVoucherListSupplierFilter">
+                            <option value="">All Suppliers</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md">
+                        <label class="form-label small">From Date</label>
+                        <input type="date" class="form-control form-control-sm" id="paymentVoucherListFromDate">
+                    </div>
+                    <div class="col-6 col-md">
+                        <label class="form-label small">To Date</label>
+                        <input type="date" class="form-control form-control-sm" id="paymentVoucherListToDate">
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-12 d-flex justify-content-between">
+                        <div>
+                            <button class="btn btn-success" onclick="downloadPaymentVouchersCSV()">
+                                <i class="fas fa-download me-2"></i>Download CSV
+                            </button>
+                            <button class="btn btn-info ms-2" onclick="printPaymentVoucherList()">
+                                <i class="fas fa-print me-2"></i>Print List
+                            </button>
+                            <button class="btn btn-primary ms-2" onclick="printSelectedVouchersList()">
+                                <i class="fas fa-print me-2"></i>Print Selected
+                            </button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="filterPaymentVouchers()">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="no-print"><input type="checkbox" id="paymentSelectAll"></th>
+                                    <th>Voucher #</th>
+                                    <th>Date</th>
+                                    <th>Supplier</th>
+                                    <th>Branch</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Description</th>
+                                    <th class="no-print">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentVoucherListTable">
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted">Loading vouchers...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="category-voucher-list-content" role="tabpanel">
+            <div class="filter-section mb-4">
+                <div class="row g-2">
+                    <div class="col-6 col-md">
+                        <label class="form-label small">Search</label>
+                        <input type="text" class="form-control form-select-sm" id="categoryVoucherListSearch" placeholder="Search...">
+                    </div>
+                    <div class="col-6 col-md">
+                        <label class="form-label small">Branch Filter</label>
+                        <select class="form-select form-select-sm" id="categoryVoucherListBranchFilter">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md">
+                        <label class="form-label small">Category Filter</label>
+                        <select class="form-select form-select-sm" id="categoryVoucherListCategoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md">
+                        <label class="form-label small">From Date</label>
+                        <input type="date" class="form-control form-select-sm" id="categoryVoucherListFromDate">
+                    </div>
+                    <div class="col-6 col-md">
+                        <label class="form-label small">To Date</label>
+                        <input type="date" class="form-control form-select-sm" id="categoryVoucherListToDate">
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-12 d-flex justify-content-between">
+                        <div>
+                            <button class="btn btn-info" onclick="printCategoryVoucherListTab()">
+                                <i class="fas fa-print me-2"></i>Print List
+                            </button>
+                            <button class="btn btn-primary ms-2" onclick="printSelectedCategoryVouchersList()">
+                                <i class="fas fa-print me-2"></i>Print Selected
+                            </button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary" onclick="loadCategoryVoucherListTab()">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="no-print"><input type="checkbox" id="categoryVoucherSelectAll"></th>
+                                    <th>Voucher #</th>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Branch</th>
+                                    <th class="text-end">Amount</th>
+                                    <th>Method</th>
+                                    <th>Description</th>
+                                    <th class="no-print">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoryVoucherListTableBody">
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted">Loading vouchers...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

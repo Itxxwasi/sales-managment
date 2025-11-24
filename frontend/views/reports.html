@@ -1,0 +1,805 @@
+<div id="reports-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Sales Reports</h1>
+        <p class="dashboard-subtitle">Generate and view sales reports</p>
+    </div>
+    <div class="report-tabs no-print">
+        <button class="report-tab active" data-tab="sales-report">
+            <i class="fas fa-chart-line me-2"></i>Sales Report
+        </button>
+        <button class="report-tab" data-tab="sales-comparison-report">
+            <i class="fas fa-chart-bar me-2"></i>Sales Comparison
+        </button>
+        <button class="report-tab" data-tab="datewise-sales-report">
+            <i class="fas fa-calendar-day me-2"></i>Date-Wise Sales
+        </button>
+        <button class="report-tab" data-tab="payment-reports">
+            <i class="fas fa-file-invoice-dollar me-2"></i>Payment Reports
+        </button>
+        <button class="report-tab" data-tab="department-wise-report">
+            <i class="fas fa-building me-2"></i>Department-Wise Report
+        </button>
+        <button class="report-tab" data-tab="sub-department-wise-report">
+            <i class="fas fa-sitemap me-2"></i>Sub-Department-Wise Report
+        </button>
+        <button class="report-tab" data-tab="department-wise-sale-comparison">
+            <i class="fas fa-chart-pie me-2"></i>Department-Wise Sale Comparison
+        </button>
+        <button class="report-tab" data-tab="branch-wise-sale-comparison">
+            <i class="fas fa-chart-line me-2"></i>Branch-Wise Sale Comparison
+        </button>
+    </div>
+    <div id="tab-sales-report" class="report-tab-content active">
+        <div class="card mb-4 no-print">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Sales Report Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Branch</label>
+                        <select class="form-select" id="salesReportBranch">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="salesReportCategory">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" id="salesReportDateFrom">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" id="salesReportDateTo">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generateSalesReportBtn">
+                            <i class="fas fa-file-alt me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4" id="salesSummaryCards">
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Sales</h6>
+                        <h3 class="text-white mb-0" id="summaryTotalSales">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #136F63 0%, #17a2b8 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Cost</h6>
+                        <h3 class="text-white mb-0" id="summaryTotalCost">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #CF2A2A 0%, #ff6b6b 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Profit</h6>
+                        <h3 class="text-white mb-0" id="summaryTotalProfit">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #4D4D4D 0%, #6c757d 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Profit Margin</h6>
+                        <h3 class="text-white mb-0" id="summaryProfitMargin">0%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-title mb-0">Sales Detail Report</h5>
+                        <div id="salesReportSubtitle" class="text-muted small mt-1" style="display: none;"></div>
+                    </div>
+                    <button class="btn btn-success no-print" id="printSalesReportBtn">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+                <div id="salesReportBranchNameHeader" style="display: none; margin-bottom: 20px;">
+                    <h4 style="font-size: 1.8rem; color: #495057; font-weight: 700; text-align: center; margin: 0;">
+                        <span id="salesReportBranchName"></span>
+                    </h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="display: none;">
+                            <tr>
+                                <th>Category</th>
+                                <th>Total Sales</th>
+                                <th>Total Cost</th>
+                                <th>Total Profit</th>
+                                <th>Profit Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesReportTableBody">
+                            <tr>
+                                <td colspan="5" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Click "Generate Report" to view sales data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-sales-comparison-report" class="report-tab-content">
+        <div class="card mb-4 no-print">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Comparison Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Branch</label>
+                        <select class="form-select" id="comparisonReportBranch">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="comparisonReportCategory">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" id="comparisonReportDateFrom">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" id="comparisonReportDateTo">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generateComparisonReportBtn">
+                            <i class="fas fa-chart-bar me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-title mb-0">Sales Comparison Report</h5>
+                        <div id="comparisonReportSubtitle" class="text-muted small mt-1" style="display: none;"></div>
+                    </div>
+                    <button class="btn btn-success no-print" id="printComparisonReportBtn">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Category</th>
+                                <th>Branch</th>
+                                <th>Total Sales</th>
+                                <th>Total Cost</th>
+                                <th>Total Profit</th>
+                                <th>Profit Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonReportTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Click "Generate Report" to view comparison data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-datewise-sales-report" class="report-tab-content">
+        <div class="card mb-4 no-print">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Search & Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Search</label>
+                        <input type="text" class="form-control" id="datewiseSearch" placeholder="Search by date, branch, category...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" id="datewiseReportDateFrom">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" id="datewiseReportDateTo">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Branch</label>
+                        <select class="form-select" id="datewiseReportBranch">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="datewiseReportCategory">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generateDatewiseReportBtn">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">Date-Wise Sales Data</h5>
+                    <button class="btn btn-success no-print" id="printDatewiseReportBtn">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Branch</th>
+                                <th>Category</th>
+                                <th>Sales Amount</th>
+                                <th>Cost</th>
+                                <th>Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datewiseReportTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Use search to view date-wise sales data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-payment-reports" class="report-tab-content">
+        <div class="card mb-4 no-print">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Payment Report Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Branch</label>
+                        <select class="form-select" id="paymentReportBranchFilter">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="paymentReportCategoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" id="paymentReportFromDateFilter">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" id="paymentReportToDateFilter">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generatePaymentReportBtn">
+                            <i class="fas fa-file-alt me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4" id="paymentSummaryCards">
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Sales</h6>
+                        <h3 class="text-white mb-0" id="paymentSummaryTotalSales">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #136F63 0%, #17a2b8 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Cost</h6>
+                        <h3 class="text-white mb-0" id="paymentSummaryTotalCost">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Category Payments</h6>
+                        <h3 class="text-white mb-0" id="paymentSummaryCategoryPayments">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #CF2A2A 0%, #ff6b6b 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Balance Payment</h6>
+                        <h3 class="text-white mb-0" id="paymentSummaryBalancePayment">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-title mb-0">Payment Detail Report</h5>
+                        <div id="paymentReportSubtitle" class="text-muted small mt-1" style="display: none;"></div>
+                    </div>
+                    <button class="btn btn-success no-print" id="printPaymentReportBtn">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+                <div id="paymentReportBranchNameHeader" style="display: none; margin-bottom: 20px;">
+                    <h4 style="font-size: 1.8rem; color: #495057; font-weight: 700; text-align: center; margin: 0;">
+                        <span id="paymentReportBranchName"></span>
+                    </h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="display: none;">
+                            <tr>
+                                <th>Category</th>
+                                <th>Branch</th>
+                                <th>Sale</th>
+                                <th>Cost</th>
+                                <th>Category Payments</th>
+                                <th>Balance Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentReportTableBody">
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Click "Generate Report" to view payment data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-department-wise-report" class="report-tab-content">
+        <div class="card mb-4 no-print">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Department-Wise Report Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Branch</label>
+                        <select class="form-select" id="deptWiseReportBranch">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="deptWiseReportDepartment">
+                            <option value="">All Departments</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" id="deptWiseReportDateFrom">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" id="deptWiseReportDateTo">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generateDeptWiseReportBtn">
+                            <i class="fas fa-file-alt me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4" id="deptWiseSummaryCards">
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Gross Sale</h6>
+                        <h3 class="text-white mb-0" id="deptWiseSummaryGrossSale">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Discount</h6>
+                        <h3 class="text-white mb-0" id="deptWiseSummaryTotalDiscount">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #CF2A2A 0%, #ff6b6b 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Return</h6>
+                        <h3 class="text-white mb-0" id="deptWiseSummaryTotalReturn">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #136F63 0%, #17a2b8 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total GST</h6>
+                        <h3 class="text-white mb-0" id="deptWiseSummaryTotalGST">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #4D4D4D 0%, #6c757d 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Net Sale</h6>
+                        <h2 class="text-white mb-0" id="deptWiseSummaryNetSale">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-title mb-0">Department-Wise Report</h5>
+                        <div id="deptWiseReportSubtitle" class="text-muted small mt-1" style="display: none;"></div>
+                    </div>
+                    <button class="btn btn-success no-print" id="printDeptWiseReportBtn">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+                <h4 id="deptWiseReportBranchName" class="text-center mt-2 mb-3" style="display: none; font-weight: 600; background-color: #2c6e8a; color: white; padding: 15px; border-radius: 5px;"></h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="display: none;">
+                            <tr>
+                                <th>Department</th>
+                                <th class="text-end">Gross Sale</th>
+                                <th class="text-end">Discount Value</th>
+                                <th class="text-end">Discount %</th>
+                                <th class="text-end">Return</th>
+                                <th class="text-end">Sale Value</th>
+                                <th class="text-end">GST</th>
+                                <th class="text-end">Net Sale</th>
+                                <th class="text-end">Daily Sale Average</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deptWiseReportTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Click "Generate Report" to view department sales data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-sub-department-wise-report" class="report-tab-content">
+        <div class="card mb-4 no-print">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Sub-Department-Wise Report Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Branch</label>
+                        <select class="form-select" id="subDeptWiseReportBranch">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="subDeptWiseReportDepartment">
+                            <option value="">All Departments</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Sub-Department</label>
+                        <select class="form-select" id="subDeptWiseReportSubDepartment">
+                            <option value="">All Sub-Departments</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" id="subDeptWiseReportDateFrom">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" id="subDeptWiseReportDateTo">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generateSubDeptWiseReportBtn">
+                            <i class="fas fa-file-alt me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4" id="subDeptWiseSummaryCards">
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Gross Sale</h6>
+                        <h3 class="text-white mb-0" id="subDeptWiseSummaryGrossSale">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Discount</h6>
+                        <h3 class="text-white mb-0" id="subDeptWiseSummaryTotalDiscount">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #CF2A2A 0%, #ff6b6b 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total Return</h6>
+                        <h3 class="text-white mb-0" id="subDeptWiseSummaryTotalReturn">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #136F63 0%, #17a2b8 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Total GST</h6>
+                        <h3 class="text-white mb-0" id="subDeptWiseSummaryTotalGST">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card text-center border-0 shadow-sm" style="background: linear-gradient(135deg, #4D4D4D 0%, #6c757d 100%);">
+                    <div class="card-body">
+                        <h6 class="text-white mb-2">Net Sale</h6>
+                        <h2 class="text-white mb-0" id="subDeptWiseSummaryNetSale">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-title mb-0">Sub-Department-Wise Report</h5>
+                        <div id="subDeptWiseReportSubtitle" class="text-muted small mt-1" style="display: none;"></div>
+                    </div>
+                    <button class="btn btn-success no-print" id="printSubDeptWiseReportBtn">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+                <h4 id="subDeptWiseReportBranchName" class="text-center mt-2 mb-3" style="display: none; font-weight: 600;"></h4>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="display: none;">
+                            <tr>
+                                <th>Sub-Department</th>
+                                <th>Department</th>
+                                <th>Branch</th>
+                                <th class="text-end">Gross Sale</th>
+                                <th class="text-end">Discount</th>
+                                <th class="text-end">Return</th>
+                                <th class="text-end">Sale Value</th>
+                                <th class="text-end">GST</th>
+                                <th class="text-end">Net Sale</th>
+                                <th class="text-end">Daily Sale Average</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subDeptWiseReportTableBody">
+                            <tr>
+                                <td colspan="10" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Click "Generate Report" to view sub-department sales data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-department-wise-sale-comparison" class="report-tab-content">
+        <div class="card mb-4 no-print">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Department-Wise Sale Comparison Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Branch</label>
+                        <select class="form-select" id="deptComparisonReportBranch">
+                            <option value="">All Branches</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="deptComparisonReportDepartment">
+                            <option value="">All Departments</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" id="deptComparisonReportDateFrom">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" id="deptComparisonReportDateTo">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generateDeptComparisonReportBtn">
+                            <i class="fas fa-chart-pie me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-title mb-0">Department-Wise Sale Comparison</h5>
+                        <div id="deptComparisonReportSubtitle" class="text-muted small mt-1" style="display: none;"></div>
+                    </div>
+                    <button class="btn btn-success no-print" id="printDeptComparisonReportBtn">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="display: none;">
+                            <tr>
+                                <th>Rank</th>
+                                <th>Department</th>
+                                <th>Branch</th>
+                                <th class="text-end">Gross Sale</th>
+                                <th class="text-end">Discount</th>
+                                <th class="text-end">Return</th>
+                                <th class="text-end">Sale Value</th>
+                                <th class="text-end">GST</th>
+                                <th class="text-end">Net Sale</th>
+                                <th class="text-end">Profit Margin %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deptComparisonReportTableBody">
+                            <tr>
+                                <td colspan="10" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Click "Generate Report" to view department comparison data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab-branch-wise-sale-comparison" class="report-tab-content">
+        <div class="card mb-4 no-print">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-filter me-2"></i>Branch-Wise Sale Comparison Filters
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" id="branchComparisonReportCategory">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="branchComparisonReportDepartment">
+                            <option value="">All Departments</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">From Date</label>
+                        <input type="date" class="form-control" id="branchComparisonReportDateFrom">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">To Date</label>
+                        <input type="date" class="form-control" id="branchComparisonReportDateTo">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-primary w-100" id="generateBranchComparisonReportBtn">
+                            <i class="fas fa-chart-line me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h5 class="card-title mb-0">Branch-Wise Sale Comparison</h5>
+                        <div id="branchComparisonReportSubtitle" class="text-muted small mt-1" style="display: none;"></div>
+                    </div>
+                    <button class="btn btn-success no-print" id="printBranchComparisonReportBtn">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="display: none;">
+                            <tr>
+                                <th>Rank</th>
+                                <th>Branch</th>
+                                <th class="text-end">Gross Sale</th>
+                                <th class="text-end">Discount</th>
+                                <th class="text-end">Return</th>
+                                <th class="text-end">Sale Value</th>
+                                <th class="text-end">GST</th>
+                                <th class="text-end">Net Sale</th>
+                                <th class="text-end">Profit Margin %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="branchComparisonReportTableBody">
+                            <tr>
+                                <td colspan="9" class="text-center text-muted py-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Click "Generate Report" to view branch comparison data
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

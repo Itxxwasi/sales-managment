@@ -1,0 +1,107 @@
+<div id="category-voucher-list-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Category Voucher List</h1>
+        <p class="dashboard-subtitle">View category-wise sales, costs, payments, and balance</p>
+    </div>
+    <div class="filter-section mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Category</label>
+                <select class="form-select" id="categoryVoucherListCategoryFilter">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Branch</label>
+                <select class="form-select" id="categoryVoucherListBranchFilter">
+                    <option value="">All Branches</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">From Date</label>
+                <input type="date" class="form-control" id="categoryVoucherListFromDate">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">To Date</label>
+                <input type="date" class="form-control" id="categoryVoucherListToDate">
+            </div>
+        </div>
+        <div class="row g-3 mt-2">
+            <div class="col-md-12 d-flex justify-content-between">
+                <div>
+                    <button class="btn btn-primary" onclick="loadCategoryVoucherList()">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                    <button class="btn btn-secondary ms-2" onclick="clearCategoryVoucherFilters()">
+                        <i class="fas fa-times me-2"></i>Clear Filters
+                    </button>
+                </div>
+                <div>
+                    <button class="btn btn-info" onclick="printCategoryVoucherList()">
+                        <i class="fas fa-print me-2"></i>Print Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4" id="categoryVoucherSummaryCards">
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total Sales</h6>
+                    <h3 class="mb-0 text-success" id="categoryVoucherTotalSales">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total Cost</h6>
+                    <h3 class="mb-0 text-danger" id="categoryVoucherTotalCost">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Total Payment</h6>
+                    <h3 class="mb-0 text-info" id="categoryVoucherTotalPayment">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h6 class="text-muted mb-2">Balance Payment</h6>
+                    <h3 class="mb-0" id="categoryVoucherBalance">
+                        <span class="text-warning">0</span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Branch</th>
+                            <th>Date</th>
+                            <th class="text-end">Sales</th>
+                            <th class="text-end">Cost</th>
+                            <th class="text-end">Payment</th>
+                            <th class="text-end">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryVoucherListTable">
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Click "Apply Filters" to load data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

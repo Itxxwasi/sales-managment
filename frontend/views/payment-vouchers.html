@@ -1,0 +1,170 @@
+<div id="payment-vouchers-section" class="content-section">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Payment Vouchers</h1>
+        <p class="dashboard-subtitle">Create and manage payment vouchers</p>
+    </div>
+    <ul class="nav nav-tabs mb-3" id="paymentVoucherTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="supplier-voucher-tab" data-bs-toggle="tab" data-bs-target="#supplier-voucher-content" type="button" role="tab">
+                <i class="fas fa-truck me-2"></i>Supplier Voucher
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="category-voucher-tab" data-bs-toggle="tab" data-bs-target="#category-voucher-content" type="button" role="tab">
+                <i class="fas fa-tags me-2"></i>Category Voucher
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="paymentVoucherTabContent">
+        <div class="tab-pane fade show active" id="supplier-voucher-content" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Create Supplier Payment Voucher</h5>
+                </div>
+                <div class="card-body">
+                    <form id="paymentVoucherForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Voucher Number</label>
+                                    <input type="text" class="form-control" id="paymentVoucherNumber" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="paymentVoucherDate" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Supplier</label>
+                                    <select class="form-select" id="paymentVoucherSupplier" required>
+                                        <option value="">Select Supplier</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Branch</label>
+                                    <select class="form-select" id="paymentVoucherBranch" required>
+                                        <option value="">Select Branch</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Payment Method</label>
+                                    <select class="form-select" id="paymentVoucherMethod" required>
+                                        <option value="">Select Method</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="Online Payment">Online Payment</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Amount (PKR)</label>
+                                    <input type="number" class="form-control" id="paymentVoucherAmount" step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="paymentVoucherDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" onclick="resetPaymentVoucherForm()">
+                                <i class="fas fa-redo me-2"></i>Reset
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Voucher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="category-voucher-content" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Create Category Payment Voucher</h5>
+                </div>
+                <div class="card-body">
+                    <form id="categoryVoucherForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Voucher Number</label>
+                                    <input type="text" class="form-control" id="categoryVoucherNumber" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Date</label>
+                                    <input type="date" class="form-control" id="categoryVoucherDate" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" id="categoryVoucherCategory" required>
+                                        <option value="">Select Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Branch</label>
+                                    <select class="form-select" id="categoryVoucherBranch" required>
+                                        <option value="">Select Branch</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Payment Method</label>
+                                    <select class="form-select" id="categoryVoucherMethod" required>
+                                        <option value="">Select Method</option>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Cheque">Cheque</option>
+                                        <option value="Online Payment">Online Payment</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Amount (PKR)</label>
+                                    <input type="number" class="form-control" id="categoryVoucherAmount" step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="categoryVoucherDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" onclick="resetCategoryVoucherForm()">
+                                <i class="fas fa-redo me-2"></i>Reset
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Voucher
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
