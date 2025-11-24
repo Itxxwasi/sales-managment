@@ -10434,9 +10434,10 @@
                     headers['Authorization'] = `Bearer ${this.token}`;
                 }
                 
+                const mergedHeaders = { ...headers, ...(options.headers || {}) };
                 const config = {
-                    headers,
-                    ...options
+                    ...options,
+                    headers: mergedHeaders
                 };
                 
                 try {
@@ -10444,8 +10445,15 @@
                     
                     // Handle 401 Unauthorized specifically
                     if (response.status === 401) {
-                        this.clearToken();
-                        showLoginSection();
+                        const isAuthEndpoint = cleanEndpoint.startsWith('/auth/');
+                        if (isAuthEndpoint) {
+                            this.clearToken();
+                            if (typeof showLoginSection === 'function') showLoginSection();
+                        } else {
+                            if (typeof showNotification === 'function') {
+                                showNotification('Unauthorized or session expired. Please login again.', 'error');
+                            }
+                        }
                         throw new Error('Authentication failed. Please login again.');
                     }
                     
@@ -10468,6 +10476,9 @@
                             } else {
                                 errorMessage = text || `Request failed: ${response.status}`;
                             }
+                        }
+                        if (response.status === 403 && typeof showNotification === 'function') {
+                            showNotification('Access denied. Admin privileges required.', 'error');
                         }
                         throw new Error(errorMessage);
                     }
