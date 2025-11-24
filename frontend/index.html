@@ -14342,20 +14342,13 @@
                     // Event handler for branch change is handled in sales.js to avoid conflicts
                     // Only add if not already handled by sales.js module
                     if (!window.__deptBranchChangeHandled) {
-                        const prevValue = bulkDeptSaleBranchTab2.value || '';
                         const branchClone = bulkDeptSaleBranchTab2.cloneNode(true);
                         bulkDeptSaleBranchTab2.parentNode.replaceChild(branchClone, bulkDeptSaleBranchTab2);
-                        if (prevValue) {
-                            branchClone.value = prevValue;
-                        }
                         branchClone.addEventListener('change', function() {
                             if (typeof window.loadDepartmentsForBulkSalesTab2 === 'function') {
                                 window.loadDepartmentsForBulkSalesTab2();
                             }
                         });
-                        if (branchClone.value) {
-                            try { branchClone.dispatchEvent(new Event('change', { bubbles: true })); } catch (e) {}
-                        }
                         window.__deptBranchChangeHandled = true;
                     }
                 }

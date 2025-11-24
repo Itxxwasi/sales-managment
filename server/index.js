@@ -843,6 +843,37 @@ app.post('/api/admin/restore', authenticate, isAdmin, checkDatabaseConnection, a
         }));
         await Category.insertMany(categories, { session });
       }
+      if (backup.categoryPaymentsData && Array.isArray(backup.categoryPaymentsData)) {
+        const allBranches = await Branch.find({}).session(session);
+        const allCategories = await Category.find({}).session(session);
+        const branchMap = new Map();
+        allBranches.forEach(b => branchMap.set(b.name, b._id));
+        const categoryMap = new Map();
+        allCategories.forEach(c => categoryMap.set(c.name, c._id));
+        const docs = [];
+        for (const p of backup.categoryPaymentsData) {
+          const bname = p.branchId?.name || p.branch?.name || p.branch || '';
+          const cname = p.categoryId?.name || p.category?.name || p.category || '';
+          const bid = branchMap.get(bname);
+          const cid = categoryMap.get(cname);
+          if (!bid || !cid) continue;
+          docs.push({
+            branchId: bid,
+            categoryId: cid,
+            voucherNumber: p.voucherNumber,
+            date: new Date(p.date),
+            amount: p.amount || 0,
+            description: p.description || '',
+            paymentMethod: p.paymentMethod || 'Cash',
+            category: cname,
+            notes: p.notes || '',
+            status: p.status || 'Pending'
+          });
+        }
+        if (docs.length > 0) {
+          await CategoryPayment.insertMany(docs, { session });
+        }
+      }
       
       // Restore Suppliers (needed before Payments)
       if (backup.suppliersData && Array.isArray(backup.suppliersData)) {
@@ -855,6 +886,37 @@ app.post('/api/admin/restore', authenticate, isAdmin, checkDatabaseConnection, a
           address: s.address || ''
         }));
         await Supplier.insertMany(suppliers, { session });
+      }
+      if (backup.paymentsData && Array.isArray(backup.paymentsData)) {
+        const allBranches = await Branch.find({}).session(session);
+        const allSuppliers = await Supplier.find({}).session(session);
+        const branchMap = new Map();
+        allBranches.forEach(b => branchMap.set(b.name, b._id));
+        const supplierMap = new Map();
+        allSuppliers.forEach(s => supplierMap.set(s.name, s._id));
+        const docs = [];
+        for (const p of backup.paymentsData) {
+          const bname = p.branchId?.name || p.branch?.name || p.branch || '';
+          const sname = p.supplierId?.name || p.supplier?.name || p.supplier || '';
+          const bid = branchMap.get(bname);
+          const sid = supplierMap.get(sname);
+          if (!bid || !sid) continue;
+          docs.push({
+            branchId: bid,
+            supplierId: sid,
+            voucherNumber: p.voucherNumber,
+            date: new Date(p.date),
+            amount: p.amount || 0,
+            description: p.description || '',
+            paymentMethod: p.paymentMethod || 'Cash',
+            supplier: sname,
+            notes: p.notes || '',
+            status: p.status || 'Pending'
+          });
+        }
+        if (docs.length > 0) {
+          await Payment.insertMany(docs, { session });
+        }
       }
       
       // Restore Users (needs Groups and Branches to exist)
@@ -1013,6 +1075,8 @@ app.post('/api/admin/restore', authenticate, isAdmin, checkDatabaseConnection, a
           suppliers: backup.suppliersData?.length || 0,
           users: backup.usersData?.length || 0,
           sales: backup.salesData?.length || 0,
+          payments: backup.paymentsData?.length || 0,
+          categoryPayments: backup.categoryPaymentsData?.length || 0,
           departments: backup.departmentsData?.length || 0,
           subDepartments: backup.subDepartmentsData?.length || 0,
           departmentSales: backup.departmentSalesData?.length || 0

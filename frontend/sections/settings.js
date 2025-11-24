@@ -433,8 +433,13 @@
           '⚠️ WARNING: Restoring this backup will REPLACE ALL existing data!\n\n' +
           'This includes:\n' +
           '- All sales records\n' +
+          '- Department-wise sales records\n' +
+          '- Supplier payment vouchers\n' +
+          '- Category payment vouchers\n' +
           '- All branches\n' +
           '- All categories\n' +
+          '- All suppliers\n' +
+          '- All departments and sub-departments\n' +
           '- All users and groups\n' +
           '- All settings\n\n' +
           'This action cannot be undone. Are you sure you want to continue?'
@@ -462,6 +467,8 @@
             `- Branches: ${restoredInfo.branches}\n` +
             `- Categories: ${restoredInfo.categories}\n` +
             `- Suppliers: ${restoredInfo.suppliers || 0}\n` +
+            `- Supplier Payments: ${restoredInfo.payments || 0}\n` +
+            `- Category Payments: ${restoredInfo.categoryPayments || 0}\n` +
             `- Users: ${restoredInfo.users}\n` +
             `- Departments: ${restoredInfo.departments || 0}\n` +
             `- Sub-Departments: ${restoredInfo.subDepartments || 0}\n` +
