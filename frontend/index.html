@@ -9284,6 +9284,10 @@
                                 <option value="secondary">Gray</option>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label for="categorySequence" class="form-label">Custom Sequence</label>
+                            <input type="number" class="form-control" id="categorySequence" min="0" step="1" placeholder="Auto if left empty">
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -10130,8 +10134,8 @@
         // API SERVICE LAYER
         // ========================================
         
-        // API Service Layer with Authentication
-        class APIService {
+            // API Service Layer with Authentication
+            class APIService {
             constructor() {
                 this.baseURL = '/api';
                 this.token = localStorage.getItem('authToken') || null;
@@ -10407,6 +10411,9 @@
             // Categories
             async getCategories() {
                 return this.request('/categories');
+            }
+            async getCategory(id) {
+                return this.request(`/categories/${id}`);
             }
             
             async createCategory(category) {
@@ -16296,24 +16303,23 @@
                 'dashboardBranchWiseReportCategory'
             ];
             
-            selectors.forEach(selectorId => {
+            selectors.forEach(function(selectorId){
                 const selector = document.getElementById(selectorId);
                 if (selector) {
-                    // Keep the first option
                     const firstOption = selector.options[0];
                     selector.innerHTML = '';
-                    if (firstOption) {
-                        selector.appendChild(firstOption);
-                    }
-                    
-                    // Check if categories data is available
-                    if (!appData.categories || !Array.isArray(appData.categories) || appData.categories.length === 0) {
-                        console.warn('⚠️ Categories data not available for selector:', selectorId);
-                        return; // Skip this selector if data is not available
-                    }
-                    
-                    // Add category options
-                    appData.categories.forEach(category => {
+                    if (firstOption) selector.appendChild(firstOption);
+                    if (!appData.categories || !Array.isArray(appData.categories) || appData.categories.length === 0) return;
+                    const sortedCategories = [...appData.categories].sort(function(a,b){
+                        const aSeq = a.sequence; const bSeq = b.sequence;
+                        const aHas = aSeq !== undefined && aSeq !== null;
+                        const bHas = bSeq !== undefined && bSeq !== null;
+                        if (aHas && bHas) return aSeq - bSeq;
+                        if (aHas && !bHas) return -1;
+                        if (!aHas && bHas) return 1;
+                        return new Date(a.createdAt) - new Date(b.createdAt);
+                    });
+                    sortedCategories.forEach(function(category){
                         const option = document.createElement('option');
                         option.value = category._id;
                         option.textContent = category.name;
@@ -16329,7 +16335,16 @@
             
             if (categoryReportOptions) {
                 categoryReportOptions.innerHTML = '';
-                appData.categories.forEach(category => {
+                const sortedCategories = [...(appData.categories || [])].sort(function(a,b){
+                    const aSeq = a.sequence; const bSeq = b.sequence;
+                    const aHas = aSeq !== undefined && aSeq !== null;
+                    const bHas = bSeq !== undefined && bSeq !== null;
+                    if (aHas && bHas) return aSeq - bSeq;
+                    if (aHas && !bHas) return -1;
+                    if (!aHas && bHas) return 1;
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                });
+                sortedCategories.forEach(function(category){
                     const listItem = document.createElement('li');
                     listItem.innerHTML = `<a class="dropdown-item" href="#" data-value="${category._id}">${category.name}</a>`;
                     categoryReportOptions.appendChild(listItem);
@@ -16381,7 +16396,16 @@
             const container = document.getElementById('paymentCategoryBoxes');
             container.innerHTML = '';
             
-            appData.categories.forEach(category => {
+            const sortedCategoriesForBoxes = [...(appData.categories || [])].sort(function(a,b){
+                const aSeq = a.sequence; const bSeq = b.sequence;
+                const aHas = aSeq !== undefined && aSeq !== null;
+                const bHas = bSeq !== undefined && bSeq !== null;
+                if (aHas && bHas) return aSeq - bSeq;
+                if (aHas && !bHas) return -1;
+                if (!aHas && bHas) return 1;
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            });
+            sortedCategoriesForBoxes.forEach(category => {
                 const box = document.createElement('div');
                 box.className = 'col-md-4 payment-category-box';
                 box.setAttribute('data-category', category._id);
@@ -16940,14 +16964,22 @@
                 filteredSales.forEach(sale => {
                     const saleBranchId = sale.branchId?._id || sale.branchId;
                     const saleCategoryId = sale.categoryId?._id || sale.categoryId;
-                    const saleBranchName = sale.branchId?.name || appData.branches.find(b => b._id === saleBranchId || b._id.toString() === saleBranchId?.toString())?.name || 'Unknown';
-                    const saleCategoryName = sale.categoryId?.name || appData.categories.find(c => c._id === saleCategoryId || c._id.toString() === saleCategoryId?.toString())?.name || 'Unknown';
-                    
+                    const saleBranchName = sale.branchId?.name || appData.branches.find(b => {
+                        const bId = b._id?.toString() || b._id;
+                        const sId = saleBranchId?.toString() || saleBranchId;
+                        return bId === sId;
+                    })?.name || 'Unknown';
+                    const saleCategoryName = sale.categoryId?.name || appData.categories.find(c => {
+                        const cId = c._id?.toString() || c._id;
+                        const sId = saleCategoryId?.toString() || saleCategoryId;
+                        return cId === sId;
+                    })?.name || 'Unknown';
                     const key = `${saleBranchId}-${saleCategoryId}`;
                     if (!reportData[key]) {
                         reportData[key] = {
                             branch: saleBranchName,
                             category: saleCategoryName,
+                            categoryId: saleCategoryId,
                             totalSales: 0,
                             totalCost: 0,
                             categoryPayments: 0,
@@ -16978,6 +17010,7 @@
                         reportData[key] = {
                             branch: branchName,
                             category: categoryName,
+                            categoryId: categoryId,
                             totalSales: 0,
                             totalCost: 0,
                             categoryPayments: 0,
@@ -17042,38 +17075,46 @@
                 if (shouldGroupByCategory) {
                     // Group by Category - Create separate card and table for each category (same structure as Category & Branch Sales Comparison)
                     const categoryGroups = {};
-                    Object.values(reportData).forEach(item => {
-                        if (!categoryGroups[item.category]) {
-                            categoryGroups[item.category] = [];
-                        }
-                        categoryGroups[item.category].push(item);
+                    Object.values(reportData).forEach(function(item){
+                        const id = item.categoryId || item.category;
+                        if (!categoryGroups[id]) categoryGroups[id] = [];
+                        categoryGroups[id].push(item);
                     });
-                    
-                    // Get categories with data
-                    const categoriesWithData = Object.keys(categoryGroups).map(categoryName => {
-                        const categoryItems = categoryGroups[categoryName];
-                        // Calculate category totals
+                    const categoriesWithData = Object.keys(categoryGroups).map(function(catId){
+                        const categoryItems = categoryGroups[catId];
                         let categoryTotalSales = 0, categoryTotalCost = 0, categoryTotalPayments = 0, categoryTotalBalance = 0;
-                        categoryItems.forEach(item => {
+                        categoryItems.forEach(function(item){
                             categoryTotalSales += item.totalSales;
                             categoryTotalCost += item.totalCost;
                             categoryTotalPayments += item.categoryPayments;
                             categoryTotalBalance += item.balancePayment;
                         });
+                        const catDoc = (appData.categories || []).find(function(c){
+                            const cId = c._id?.toString() || c._id;
+                            const pId = catId?.toString() || catId;
+                            return cId === pId;
+                        }) || null;
                         return {
-                            name: categoryName,
+                            id: catId,
+                            name: catDoc?.name || (categoryItems[0]?.category || 'Unknown'),
+                            sequence: catDoc?.sequence,
+                            createdAt: catDoc?.createdAt,
                             items: categoryItems,
-                            totals: {
-                                sales: categoryTotalSales,
-                                cost: categoryTotalCost,
-                                payments: categoryTotalPayments,
-                                balance: categoryTotalBalance
-                            }
+                            totals: { sales: categoryTotalSales, cost: categoryTotalCost, payments: categoryTotalPayments, balance: categoryTotalBalance }
                         };
                     });
-                    
-                    // Display grouped by category - each category has its own card (same structure as comparison tables)
-                    categoriesWithData.forEach((categoryData, index) => {
+                    const sortedCategoriesWithData = categoriesWithData.sort(function(a,b){
+                        const aSeq = a.sequence; const bSeq = b.sequence;
+                        const aHas = aSeq !== undefined && aSeq !== null;
+                        const bHas = bSeq !== undefined && bSeq !== null;
+                        if (aHas && bHas) return aSeq - bSeq;
+                        if (aHas && !bHas) return -1;
+                        if (!aHas && bHas) return 1;
+                        const aDate = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                        const bDate = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                        return aDate - bDate;
+                    });
+                    sortedCategoriesWithData.forEach(function(categoryData, index){
                         const tableId = `paymentTable${index}`;
                         const tableBodyId = `paymentTableBody${index}`;
                         
@@ -17235,10 +17276,18 @@
             }
             
             if (categoryFilter && appData.categories) {
-                // Keep "All Categories" option
                 const currentValue = categoryFilter.value;
                 categoryFilter.innerHTML = '<option value="">All Categories</option>';
-                appData.categories.forEach(category => {
+                const sortedCategories = [...appData.categories].sort(function(a,b){
+                    const aSeq = a.sequence; const bSeq = b.sequence;
+                    const aHas = aSeq !== undefined && aSeq !== null;
+                    const bHas = bSeq !== undefined && bSeq !== null;
+                    if (aHas && bHas) return aSeq - bSeq;
+                    if (aHas && !bHas) return -1;
+                    if (!aHas && bHas) return 1;
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                });
+                sortedCategories.forEach(function(category){
                     const option = document.createElement('option');
                     option.value = category._id;
                     option.textContent = category.name;
@@ -27581,8 +27630,16 @@ sortedBranches.forEach(data => {
         
         // Render categories in both card and table views
         function renderCategories(categoriesData) {
-            // Sort categories by creation date to maintain consistent order
-            const sortedCategories = [...categoriesData].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            const sortedCategories = [...categoriesData].sort((a, b) => {
+                const aSeq = a.sequence;
+                const bSeq = b.sequence;
+                const aHas = aSeq !== undefined && aSeq !== null;
+                const bHas = bSeq !== undefined && bSeq !== null;
+                if (aHas && bHas) return aSeq - bSeq;
+                if (aHas && !bHas) return -1;
+                if (!aHas && bHas) return 1;
+                return new Date(a.createdAt) - new Date(b.createdAt);
+            });
             
             // Render card view
             const cardContainer = document.getElementById('categoriesContainer');
@@ -27591,7 +27648,7 @@ sortedBranches.forEach(data => {
             sortedCategories.forEach((category, index) => {
                 const card = document.createElement('div');
                 card.className = 'col-md-4 mb-3';
-                const categoryNumber = index + 1;
+                const categoryNumber = (category.sequence !== undefined && category.sequence !== null) ? category.sequence : (index + 1);
                 const fullId = category._id; // Show full MongoDB ObjectId
                 
                 card.innerHTML = `
@@ -27631,13 +27688,13 @@ sortedBranches.forEach(data => {
             sortedCategories.forEach((category, index) => {
                 const row = document.createElement('tr');
                 const createdDate = new Date(category.createdAt).toLocaleDateString();
-                const categoryNumber = index + 1;
-                const fullId = category._id; // Show full MongoDB ObjectId
+                const tableSeq = (category.sequence !== undefined && category.sequence !== null) ? category.sequence : (index + 1);
+                const fullId = category._id;
                 
                 row.innerHTML = `
                     <td>
                         <div class="d-flex align-items-center">
-                            <span class="badge bg-primary me-2">#${categoryNumber}</span>
+                            <span class="badge bg-primary me-2">#${tableSeq}</span>
                             <strong>${category.name}</strong>
                         </div>
                         <small class="text-muted">ID: ${fullId}</small>
@@ -27667,10 +27724,13 @@ sortedBranches.forEach(data => {
             const categoryData = {
                 name: document.getElementById('categoryName').value,
                 description: document.getElementById('categoryDescription').value,
-                color: document.getElementById('categoryColor').value
+                color: document.getElementById('categoryColor').value,
+                sequence: (function(){ const v = document.getElementById('categorySequence').value; return v === '' ? undefined : parseInt(v, 10); })()
             };
+            console.log('🟦 Saving category payload', categoryData);
             
             api.createCategory(categoryData).then(category => {
+                console.log('🟩 Saved category response', { id: category?._id, sequence: category?.sequence });
                 // Close modal
                 bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
                 
@@ -27701,42 +27761,41 @@ sortedBranches.forEach(data => {
         
         // Edit category
         function editCategory(id) {
-            api.getCategories().then(categoriesData => {
-                const category = categoriesData.find(c => c._id === id);
-                if (category) {
-                    // Fill form with existing data
-                    document.getElementById('categoryName').value = category.name;
-                    document.getElementById('categoryDescription').value = category.description || '';
-                    document.getElementById('categoryColor').value = category.color || 'primary';
-                    
-                    // Update modal title for EDIT mode
-                    document.getElementById('addCategoryModalLabel').textContent = 'Edit Category';
-                    
-                    // FORCE SET save button to update mode
-                    const saveBtn = document.getElementById('saveCategoryBtn');
-                    saveBtn.textContent = 'Update Category';
-                    
-                    // Remove ALL existing event handlers
-                    saveBtn.onclick = null;
-                    saveBtn.removeAttribute('onclick');
-                    
-                    // Create update handler with the specific ID
-                    const updateCategoryHandler = function() {
-                        if (document.getElementById('categoryForm').checkValidity()) {
+            api.getCategory(id).then(category => {
+                console.log('🟦 Editing category data', { id: category?._id, sequence: category?.sequence });
+                // Fill form with existing data
+                document.getElementById('categoryName').value = category.name;
+                document.getElementById('categoryDescription').value = category.description || '';
+                document.getElementById('categoryColor').value = category.color || 'primary';
+                const seqEl = document.getElementById('categorySequence');
+                if (seqEl) { seqEl.value = (category.sequence !== undefined && category.sequence !== null) ? String(category.sequence) : ''; }
+                
+                // Update modal title for EDIT mode
+                document.getElementById('addCategoryModalLabel').textContent = 'Edit Category';
+                
+                // FORCE SET save button to update mode
+                const saveBtn = document.getElementById('saveCategoryBtn');
+                saveBtn.textContent = 'Update Category';
+                
+                // Remove ALL existing event handlers
+                saveBtn.onclick = null;
+                saveBtn.removeAttribute('onclick');
+                
+                // Create update handler with the specific ID
+                const updateCategoryHandler = function() {
+                    if (document.getElementById('categoryForm').checkValidity()) {
                         updateCategory(id);
-                        } else {
-                            document.getElementById('categoryForm').reportValidity();
-                        }
-                    };
-                    
-                    // Set the new handler
-                    saveBtn.onclick = updateCategoryHandler;
-                    
-                    
-                    // Show modal
-                    const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
-                    modal.show();
-                }
+                    } else {
+                        document.getElementById('categoryForm').reportValidity();
+                    }
+                };
+                
+                // Set the new handler
+                saveBtn.onclick = updateCategoryHandler;
+                
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+                modal.show();
             }).catch(error => {
                 console.error('Error fetching category data:', error);
                 showNotification('Failed to load category data', 'error');
@@ -27748,10 +27807,13 @@ sortedBranches.forEach(data => {
             const categoryData = {
                 name: document.getElementById('categoryName').value,
                 description: document.getElementById('categoryDescription').value,
-                color: document.getElementById('categoryColor').value
+                color: document.getElementById('categoryColor').value,
+                sequence: (function(){ const v = document.getElementById('categorySequence').value; return v === '' ? undefined : parseInt(v, 10); })()
             };
+            console.log('🟨 Updating category payload', { id, sequence: categoryData.sequence });
             
             api.updateCategory(id, categoryData).then(() => {
+                console.log('🟩 Category update successful');
                 // Close modal
                 bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
                 

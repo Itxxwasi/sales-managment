@@ -1050,12 +1050,46 @@ app.delete('/api/branches/:id', authenticate, isAdmin, checkDatabaseConnection, 
 app.get('/api/categories', authenticate, async (req, res) => {
   try {
     console.log('✅ GET /api/categories route hit');
-    const categories = await Category.find().sort({ createdAt: -1 });
+    const categories = await Category.find().sort({ sequence: 1, createdAt: 1 });
     console.log(`✅ Returning ${categories.length} categories`);
     res.json(categories);
   } catch (error) {
     console.error('❌ Error fetching categories:', error.message);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Get Category by ID
+app.get('/api/categories/:id', authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid Category ID format' });
+    }
+    const category = await Category.findById(id);
+    if (!category) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+    res.json(category);
+  } catch (error) {
+    console.error('❌ Error fetching category by ID:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get Single Category by ID
+app.get('/api/categories/:id', authenticate, async (req, res) => {
+  try {
+    console.log('✅ GET /api/categories/:id route hit', req.params.id);
+    const category = await Category.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+    console.log('✅ Category loaded', { id: category._id?.toString(), sequence: category.sequence });
+    res.json(category);
+  } catch (error) {
+    console.error('❌ Error fetching category by id:', error.message);
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -1075,7 +1109,19 @@ app.post('/api/categories', authenticate, isAdmin, checkDatabaseConnection, asyn
       });
     }
     
-    const category = await Category.create(req.body);
+    let payload = { ...req.body };
+    const hasSeq = Object.prototype.hasOwnProperty.call(payload, 'sequence');
+    if (!hasSeq || payload.sequence === '' || payload.sequence === null || payload.sequence === undefined) {
+      const maxSeqDoc = await Category.findOne().sort({ sequence: -1 }).select('sequence');
+      const nextSeq = maxSeqDoc && maxSeqDoc.sequence !== undefined ? maxSeqDoc.sequence + 1 : 0;
+      payload.sequence = nextSeq;
+    } else {
+      const n = Number(payload.sequence);
+      payload.sequence = Number.isNaN(n) ? payload.sequence : n;
+    }
+    console.log('🟦 Creating category payload', { name: payload.name, sequence: payload.sequence });
+    const category = await Category.create(payload);
+    console.log('🟩 Created category', { id: category._id?.toString(), sequence: category.sequence });
     res.status(201).json(category);
   } catch (error) {
     console.error('Error creating category:', error.message);
@@ -1087,6 +1133,7 @@ app.post('/api/categories', authenticate, isAdmin, checkDatabaseConnection, asyn
 app.put('/api/categories/:id', authenticate, isAdmin, checkDatabaseConnection, async (req, res) => {
   try {
     const { name, description, color } = req.body;
+    console.log('🟨 Update category request', { id: req.params.id, sequence: req.body?.sequence });
     
     // Check if another category with the same name exists (excluding current category)
     const existingCategory = await Category.findOne({ 
@@ -1099,11 +1146,23 @@ app.put('/api/categories/:id', authenticate, isAdmin, checkDatabaseConnection, a
         error: `A category with the name "${name}" already exists. Please choose a different name.` 
       });
     }
-    
-    const updated = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description;
+    if (color !== undefined) updateData.color = color;
+    if (Object.prototype.hasOwnProperty.call(req.body, 'sequence')) {
+      const s = req.body.sequence;
+      if (s !== '' && s !== null && s !== undefined) {
+        const n = Number(s);
+        if (!Number.isNaN(n)) updateData.sequence = n;
+      }
+    }
+
+    const updated = await Category.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!updated) {
       return res.status(404).json({ error: 'Category not found' });
     }
+    console.log('🟩 Updated category', { id: updated._id?.toString(), sequence: updated.sequence });
     res.json(updated);
   } catch (error) {
     console.error('Error updating category:', error.message);
