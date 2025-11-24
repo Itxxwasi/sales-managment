@@ -187,12 +187,17 @@
       checkAndLoadDepartments();
     }, 500);
 
+    if (typeof window.__savingSales === 'undefined') {
+      window.__savingSales = false;
+    }
+
     const saveBtn = document.getElementById('saveSalesButton') || document.querySelector('#salesEntryForm button[type="submit"]');
     if (saveBtn) {
       const newBtn = saveBtn.cloneNode(true);
       saveBtn.parentNode.replaceChild(newBtn, saveBtn);
       newBtn.addEventListener('click', function(e){
         e.preventDefault();
+        if (window.__savingSales) { if (typeof showNotification === 'function') showNotification('Already saving...', 'info'); return; }
         if (typeof window.saveSalesEntry === 'function') window.saveSalesEntry();
       });
     }
@@ -223,6 +228,7 @@
         var btn = e.target.closest('#sales-section #salesEntryForm button.btn-primary, #sales-section #saveSalesButton');
         if (btn) {
           e.preventDefault();
+          if (window.__savingSales) { if (typeof showNotification === 'function') showNotification('Already saving...', 'info'); return; }
           if (typeof window.saveSalesEntry === 'function') window.saveSalesEntry();
         }
       });
@@ -1423,6 +1429,8 @@
   }
 })();
   function saveSalesEntry() {
+    if (window.__savingSales) { return; }
+    window.__savingSales = true;
     const date = document.getElementById('saleDate').value;
     const branchId = document.getElementById('saleBranch').value;
     const notes = document.getElementById('saleNotes').value;
@@ -1432,13 +1440,18 @@
     if (!branchId || branchId === '') {
       showNotification('Please select a branch before saving', 'error');
       document.getElementById('saleBranch').focus();
+      window.__savingSales = false;
       return;
     }
     if (!date) {
       showNotification('Please select a date before saving', 'error');
       document.getElementById('saleDate').focus();
+      window.__savingSales = false;
       return;
     }
+    var actionBtn = document.getElementById('saveSalesButton') || document.querySelector('#salesEntryForm button[type="submit"]');
+    if (actionBtn) { try { actionBtn.disabled = true; actionBtn.dataset.originalText = actionBtn.innerHTML; actionBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...'; } catch(e) {} }
+    Array.prototype.forEach.call(document.querySelectorAll('#salesEntryForm input, #salesEntryForm select, #salesEntryForm button'), function(el){ try { el.disabled = true; } catch(e) {} });
     const salesPromises = [];
     document.querySelectorAll('.category-sales').forEach(function(input){
       const categoryId = input.getAttribute('data-category');
@@ -1452,6 +1465,13 @@
         }
       }
     });
+    if (salesPromises.length === 0) {
+      if (typeof showNotification === 'function') showNotification('Enter at least one category sale amount', 'warning');
+      if (actionBtn) { try { actionBtn.disabled = false; actionBtn.innerHTML = actionBtn.dataset.originalText || 'Save'; } catch(e) {} }
+      Array.prototype.forEach.call(document.querySelectorAll('#salesEntryForm input, #salesEntryForm select, #salesEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+      window.__savingSales = false;
+      return;
+    }
     Promise.all(salesPromises).then(function(){
       document.getElementById('salesEntryForm').reset();
       document.getElementById('totalSales').value = '';
@@ -1461,8 +1481,14 @@
       document.getElementById('saleDate').value = today;
       showNotification('Sales entry saved successfully!', 'success');
       if (document.getElementById('dashboard-section').classList.contains('active')) { if (typeof window.loadDashboard === 'function') window.loadDashboard(); }
+      if (actionBtn) { try { actionBtn.disabled = false; actionBtn.innerHTML = actionBtn.dataset.originalText || 'Save'; } catch(e) {} }
+      Array.prototype.forEach.call(document.querySelectorAll('#salesEntryForm input, #salesEntryForm select, #salesEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+      window.__savingSales = false;
     }).catch(function(error){
       showNotification('Failed to save sales entry', 'error');
+      if (actionBtn) { try { actionBtn.disabled = false; actionBtn.innerHTML = actionBtn.dataset.originalText || 'Save'; } catch(e) {} }
+      Array.prototype.forEach.call(document.querySelectorAll('#salesEntryForm input, #salesEntryForm select, #salesEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+      window.__savingSales = false;
     });
   }
 

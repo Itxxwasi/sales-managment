@@ -21150,6 +21150,8 @@ sortedBranches.forEach(data => {
                 });
             }
         }
+
+        let isSavingDepartmentSale = false;
         
         // ========================================
         // DEPARTMENT SALES FUNCTIONS
@@ -22130,6 +22132,8 @@ sortedBranches.forEach(data => {
         
         // Save Department Sales Entry
         function saveDepartmentSalesEntry() {
+            if (isSavingDepartmentSale) { return; }
+            isSavingDepartmentSale = true;
             const date = document.getElementById('deptSaleDate').value;
             const branchId = document.getElementById('deptSaleBranch').value;
             const departmentId = document.getElementById('deptSaleDepartment').value;
@@ -22143,35 +22147,54 @@ sortedBranches.forEach(data => {
             const netSale = parseFloat(document.getElementById('deptSaleNetSale').value) || 0;
             const subDeptTotal = parseFloat(document.getElementById('deptSaleSubDepartmentTotal').value) || 0;
             const notes = document.getElementById('deptSaleNotes').value;
+            const saveBtnSingle = document.querySelector('#deptSaleEntryForm button[type="submit"]');
+            if (saveBtnSingle) { try { saveBtnSingle.disabled = true; saveBtnSingle.dataset.originalText = saveBtnSingle.innerHTML; saveBtnSingle.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...'; } catch(e) {} }
+            Array.prototype.forEach.call(document.querySelectorAll('#deptSaleEntryForm input, #deptSaleEntryForm select, #deptSaleEntryForm button'), function(el){ try { el.disabled = true; } catch(e) {} });
+            if (typeof showNotification === 'function') { showNotification('Saving department sale...', 'info'); }
             
             // Validation
             if (!branchId || branchId === '') {
                 showNotification('Please select a branch before saving', 'error');
                 document.getElementById('deptSaleBranch').focus();
+                if (saveBtnSingle) { try { saveBtnSingle.disabled = false; saveBtnSingle.innerHTML = saveBtnSingle.dataset.originalText || saveBtnSingle.innerHTML; } catch(e) {} }
+                Array.prototype.forEach.call(document.querySelectorAll('#deptSaleEntryForm input, #deptSaleEntryForm select, #deptSaleEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+                isSavingDepartmentSale = false;
                 return;
             }
             
             if (!date) {
                 showNotification('Please select a date before saving', 'error');
                 document.getElementById('deptSaleDate').focus();
+                if (saveBtnSingle) { try { saveBtnSingle.disabled = false; saveBtnSingle.innerHTML = saveBtnSingle.dataset.originalText || saveBtnSingle.innerHTML; } catch(e) {} }
+                Array.prototype.forEach.call(document.querySelectorAll('#deptSaleEntryForm input, #deptSaleEntryForm select, #deptSaleEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+                isSavingDepartmentSale = false;
                 return;
             }
             
             if (!departmentId || departmentId === '') {
                 showNotification('Please select a department before saving', 'error');
                 document.getElementById('deptSaleDepartment').focus();
+                if (saveBtnSingle) { try { saveBtnSingle.disabled = false; saveBtnSingle.innerHTML = saveBtnSingle.dataset.originalText || saveBtnSingle.innerHTML; } catch(e) {} }
+                Array.prototype.forEach.call(document.querySelectorAll('#deptSaleEntryForm input, #deptSaleEntryForm select, #deptSaleEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+                isSavingDepartmentSale = false;
                 return;
             }
             
             if (!subDepartmentId || subDepartmentId === '') {
                 showNotification('Please select a sub-department before saving', 'error');
                 document.getElementById('deptSaleSubDepartment').focus();
+                if (saveBtnSingle) { try { saveBtnSingle.disabled = false; saveBtnSingle.innerHTML = saveBtnSingle.dataset.originalText || saveBtnSingle.innerHTML; } catch(e) {} }
+                Array.prototype.forEach.call(document.querySelectorAll('#deptSaleEntryForm input, #deptSaleEntryForm select, #deptSaleEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+                isSavingDepartmentSale = false;
                 return;
             }
             
             if (grossSale <= 0) {
                 showNotification('Gross Sale must be greater than 0', 'error');
                 document.getElementById('deptSaleGrossSale').focus();
+                if (saveBtnSingle) { try { saveBtnSingle.disabled = false; saveBtnSingle.innerHTML = saveBtnSingle.dataset.originalText || saveBtnSingle.innerHTML; } catch(e) {} }
+                Array.prototype.forEach.call(document.querySelectorAll('#deptSaleEntryForm input, #deptSaleEntryForm select, #deptSaleEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+                isSavingDepartmentSale = false;
                 return;
             }
             
@@ -22243,9 +22266,15 @@ sortedBranches.forEach(data => {
                     // Load the list
                     loadDeptSalesList();
                 }
+                if (saveBtnSingle) { try { saveBtnSingle.disabled = false; saveBtnSingle.innerHTML = saveBtnSingle.dataset.originalText || saveBtnSingle.innerHTML; } catch(e) {} }
+                Array.prototype.forEach.call(document.querySelectorAll('#deptSaleEntryForm input, #deptSaleEntryForm select, #deptSaleEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+                isSavingDepartmentSale = false;
             }).catch(error => {
                 console.error('Error saving department sales entry:', error);
                 showNotification('Failed to save department sales entry: ' + (error.message || 'Unknown error'), 'error');
+                if (saveBtnSingle) { try { saveBtnSingle.disabled = false; saveBtnSingle.innerHTML = saveBtnSingle.dataset.originalText || saveBtnSingle.innerHTML; } catch(e) {} }
+                Array.prototype.forEach.call(document.querySelectorAll('#deptSaleEntryForm input, #deptSaleEntryForm select, #deptSaleEntryForm button'), function(el){ try { el.disabled = false; } catch(e) {} });
+                isSavingDepartmentSale = false;
             });
         }
         
