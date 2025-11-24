@@ -56,8 +56,7 @@ follow me on github and twitter.
 */
 // Importing the necessary modules made by wasi
 import express from 'express';
-import fs from 'fs';
-import multer from 'multer';
+// removed dynamic logo upload dependencies
 import mongoose from 'mongoose';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -695,8 +694,7 @@ app.put('/api/settings', authenticate, isAdmin, checkDatabaseConnection, async (
       dateFormat: req.body.dateFormat ?? 'DD/MM/YYYY',
       itemsPerPage: Number(req.body.itemsPerPage ?? 10),
       defaultCostPercent: req.body.defaultCostPercent !== undefined ? Number(req.body.defaultCostPercent) : undefined,
-      theme: req.body.theme ?? 'light',
-      logoUrl: typeof req.body.logoUrl === 'string' ? req.body.logoUrl : undefined
+      theme: req.body.theme ?? 'light'
     };
     
     // Remove undefined to avoid overwriting with undefined
@@ -710,59 +708,6 @@ app.put('/api/settings', authenticate, isAdmin, checkDatabaseConnection, async (
   }
 });
 
-// Logo upload: supports both multipart file upload and dataUrl fallback
-const assetsDir = path.resolve(paths.clientDir, 'assets');
-fs.mkdirSync(assetsDir, { recursive: true });
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, assetsDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || '.png';
-    const base = (req.body.fileName || 'dw-logo').replace(/[^a-zA-Z0-9_-]/g, '');
-    cb(null, `${base}${ext}`);
-  }
-});
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype && file.mimetype.startsWith('image/')) return cb(null, true);
-    cb(new Error('Only image files are allowed'));
-  }
-});
-
-app.post('/api/upload/logo', authenticate, isAdmin, upload.single('logo'), async (req, res) => {
-  try {
-    // If multipart file exists, return its URL
-    if (req.file && req.file.filename) {
-      return res.json({ url: `/assets/${req.file.filename}` });
-    }
-
-    // Fallback: support JSON body with dataUrl
-    const { dataUrl, fileName } = req.body || {};
-    if (!dataUrl || typeof dataUrl !== 'string') {
-      return res.status(400).json({ error: 'No file uploaded and dataUrl missing' });
-    }
-    const match = dataUrl.match(/^data:(image\/[^;]+);base64,(.+)$/);
-    if (!match) {
-      return res.status(400).json({ error: 'Invalid dataUrl format' });
-    }
-    const mime = match[1];
-    const base64 = match[2];
-    let ext = 'png';
-    if (mime.includes('svg')) ext = 'svg';
-    else if (mime.includes('jpeg')) ext = 'jpg';
-    else if (mime.includes('webp')) ext = 'webp';
-    const safeBase = (fileName || 'dw-logo').replace(/[^a-zA-Z0-9_-]/g, '');
-    const finalName = `${safeBase}.${ext}`;
-    const filePath = path.join(assetsDir, finalName);
-    const buffer = Buffer.from(base64, 'base64');
-    fs.writeFileSync(filePath, buffer);
-    const url = `/assets/${finalName}`;
-    res.json({ url });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
 
 // ========================================
 // DATA RESTORE API ROUTE

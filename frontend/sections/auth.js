@@ -348,6 +348,15 @@ function showLoginSection() {
   const mainApp = document.getElementById('mainApp');
   if (loginSection) loginSection.style.display = 'flex';
   if (mainApp) mainApp.style.display = 'none';
+
+  try {
+    const url = (typeof window.LOGIN_LOGO_URL === 'string' && window.LOGIN_LOGO_URL.trim()) ? window.LOGIN_LOGO_URL.trim() : 'assets/dw-logo.png';
+    document.querySelectorAll('.login-logo-inline').forEach(img => { try { img.src = url; img.style.display = ''; } catch(e) {} });
+    const savedCompanyName = localStorage.getItem('appCompanyName');
+    if (savedCompanyName) {
+      document.querySelectorAll('.company-name').forEach(el => { el.textContent = savedCompanyName; });
+    }
+  } catch(e) {}
 }
 
 function showMainApp() {

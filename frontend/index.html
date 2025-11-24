@@ -6298,7 +6298,7 @@
     <div id="loginSection" class="login-section">
         <div class="login-card">
             <div class="login-header">
-                <img src="logo.png" alt="D.Watson Pharmacy" class="login-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    
                 <h1 style="display:none;">D.Watson Pharmacy</h1>
                 <p>Sales Dashboard</p>
             </div>
@@ -6311,7 +6311,7 @@
                 
                 <!-- Hidden Admin Access Button (Secret) -->
                 <div class="text-center mb-3">
-                    <img src="logo.png" alt="Company Logo" class="login-logo-inline" onerror="this.style.display='none';">
+                    <img src="https://evil-plum-9kx4e3rsug.edgeone.app/dwatsonlogo.png" alt="Company Logo" class="login-logo-inline" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='assets/dw-logo.png';">
                     <button type="button" class="btn btn-link text-muted d-none" id="secretAccessBtn" style="font-size: 12px; opacity: 0.3;">
                         <i class="fas fa-key"></i>
                     </button>
@@ -6397,12 +6397,8 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <a class="navbar-brand" href="#dashboard" data-section="dashboard">
-                    <img src="logo.png" alt="Haris Bakhtawari Warehouse" class="navbar-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <span class="navbar-text ms-2">
                         <span class="company-name">Haris Bakhtawari Warehouse</span>
-                    </span>
-                    <span class="d-none" style="display:none;">
-                        <i class="fas fa-pills me-2"></i>Haris Bakhtawari Warehouse
                     </span>
                 </a>
                 <div class="ms-auto d-flex align-items-center">
@@ -10594,23 +10590,7 @@
                 });
             }
 
-            async uploadLogo(dataUrl, fileName = 'dw-logo') {
-                return this.request('/upload/logo', {
-                    method: 'POST',
-                    body: JSON.stringify({ dataUrl, fileName })
-                });
-            }
-
-            async uploadLogoFile(file, fileName = 'dw-logo') {
-                const form = new FormData();
-                form.append('logo', file, file.name);
-                form.append('fileName', fileName);
-                return this.request('/upload/logo', {
-                    method: 'POST',
-                    body: form,
-                    headers: {}
-                });
-            }
+            
             
             // Data Restore
             async restoreData(backupData) {
@@ -11110,6 +11090,7 @@
         const api = new APIService();
         // Expose API to window for use in external scripts
         window.api = api;
+        window.LOGIN_LOGO_URL = 'https://evil-plum-9kx4e3rsug.edgeone.app/dwatsonlogo.png';
         
         // Global data storage (NO localStorage)
         let appData = {
@@ -36282,15 +36263,9 @@ sortedBranches.forEach(data => {
                 if (hasToken) {
                     // Apply saved logo from localStorage before auth call (affects login screen)
                     try {
-                        const savedLogo = localStorage.getItem('appLogoUrl');
-                        if (savedLogo) {
-                            document.querySelectorAll('.navbar-logo, .login-logo, .login-logo-inline').forEach(img => {
-                                try {
-                                    img.src = savedLogo;
-                                    img.style.display = '';
-                                    if (img.nextElementSibling) { img.nextElementSibling.style.display = 'none'; }
-                                } catch(e) {}
-                            });
+                        const savedCompanyName = localStorage.getItem('appCompanyName');
+                        if (savedCompanyName) {
+                            document.querySelectorAll('.company-name').forEach(el => { el.textContent = savedCompanyName; });
                         }
                     } catch(e) {}
 
@@ -36304,15 +36279,8 @@ sortedBranches.forEach(data => {
                         } else if (!savedTheme) {
                             applyTheme('light');
                         }
-                        // Apply logo if available
-                        if (settingsData && settingsData.logoUrl) {
-                            document.querySelectorAll('.navbar-logo, .login-logo, .login-logo-inline').forEach(img => {
-                                try {
-                                    img.src = settingsData.logoUrl;
-                                    img.style.display = '';
-                                    if (img.nextElementSibling) { img.nextElementSibling.style.display = 'none'; }
-                                } catch(e) {}
-                            });
+                        if (settingsData && settingsData.companyName) {
+                            document.querySelectorAll('.company-name').forEach(el => { el.textContent = settingsData.companyName; });
                         }
                     }).catch(err => {
                         if (!savedTheme) {

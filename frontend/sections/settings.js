@@ -29,24 +29,7 @@
     if (typeof window.loadSettings === 'function') window.loadSettings();
     else if (typeof loadSettings === 'function') loadSettings();
 
-    // Setup logo file input listener
-    setTimeout(() => {
-      const appLogoFileEl = document.getElementById('appLogoFile');
-      if (appLogoFileEl) {
-        const newFileEl = appLogoFileEl.cloneNode(true);
-        appLogoFileEl.parentNode.replaceChild(newFileEl, appLogoFileEl);
-        newFileEl.addEventListener('change', function(e){
-          const file = e.target.files && e.target.files[0];
-          if (!file) return;
-          window.__pendingLogoFile = file;
-          try {
-            const previewUrl = URL.createObjectURL(file);
-            document.querySelectorAll('.navbar-logo, .login-logo').forEach(img => { try { img.src = previewUrl; } catch(e) {} });
-          } catch (err) {}
-          if (typeof showNotification === 'function') showNotification('Logo selected. Save settings to apply permanently.', 'info');
-        });
-      }
-    }, 100);
+    
   }
 
   function initApiKeyEventListeners() {
@@ -176,16 +159,10 @@
         }
       }
 
-      // Apply Logo
-      if (settingsData.logoUrl) {
-        try { localStorage.setItem('appLogoUrl', settingsData.logoUrl); } catch(e) {}
-        document.querySelectorAll('.navbar-logo, .login-logo, .login-logo-inline').forEach(img => {
-          try {
-            img.src = settingsData.logoUrl;
-            img.style.display = '';
-            if (img.nextElementSibling) { img.nextElementSibling.style.display = 'none'; }
-          } catch(e) {}
-        });
+      
+      if (settingsData.companyName) {
+        try { localStorage.setItem('appCompanyName', settingsData.companyName); } catch(e) {}
+        document.querySelectorAll('.company-name').forEach(el => { el.textContent = settingsData.companyName; });
       }
     }).catch(error => { 
       console.error('Error loading settings:', error); 
@@ -331,39 +308,13 @@
       return;
     }
     
-    let logoUrl = (appData.settings && appData.settings.logoUrl) || '';
-    if (window.__pendingLogoFile) {
-      try {
-        const uploaded = await api.uploadLogoFile(window.__pendingLogoFile, 'dw-logo');
-        if (uploaded && uploaded.url) {
-          logoUrl = uploaded.url;
-        }
-      } catch (e) {
-        if (typeof showNotification === 'function') {
-          showNotification('Failed to upload logo: ' + (e.message || e), 'error');
-        }
-      }
-    } else if (window.__pendingLogoDataUrl) {
-      // Fallback to dataUrl upload if present
-      try {
-        const uploaded = await api.uploadLogo(window.__pendingLogoDataUrl, 'dw-logo');
-        if (uploaded && uploaded.url) {
-          logoUrl = uploaded.url;
-        }
-      } catch (e) {
-        if (typeof showNotification === 'function') {
-          showNotification('Failed to upload logo: ' + (e.message || e), 'error');
-        }
-      }
-    }
     const settingsData = { 
       companyName: companyNameEl ? companyNameEl.value.trim() : 'D.Watson Group of Pharmacy',
       currency: currencyEl ? currencyEl.value : '',
       dateFormat: dateFormatEl ? dateFormatEl.value : 'DD/MM/YYYY',
       itemsPerPage: itemsPerPage,
       defaultCostPercent: defaultCostPercent,
-      theme: appThemeSelectEl ? appThemeSelectEl.value : 'light',
-      logoUrl: logoUrl
+      theme: appThemeSelectEl ? appThemeSelectEl.value : 'light'
     }; 
     
     // Show loading notification
@@ -377,10 +328,9 @@
       if (settingsData.theme && typeof applyTheme === 'function') {
         applyTheme(settingsData.theme);
       }
-      if (settingsData.logoUrl) {
-        document.querySelectorAll('.navbar-logo, .login-logo').forEach(img => {
-          try { img.src = settingsData.logoUrl; } catch(e) {}
-        });
+      
+      if (settingsData.companyName) {
+        document.querySelectorAll('.company-name').forEach(el => { el.textContent = settingsData.companyName; });
       }
       if (typeof showNotification === 'function') {
         showNotification('Settings saved successfully!', 'success');
