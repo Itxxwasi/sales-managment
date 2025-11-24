@@ -336,7 +336,71 @@
     }); 
   }
 
-  function backupData() { Promise.all([api.getSales(), api.getBranches(), api.getCategories(), api.getGroups(), api.getUsers(), api.getSettings()]).then(([salesData, branchesData, categoriesData, groupsData, usersData, settingsData]) => { const backup = { salesData, branchesData, categoriesData, groupsData, usersData, settingsData, timestamp: new Date().toISOString() }; const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' }); const url = window.URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'backup_' + new Date().toISOString().split('T')[0] + '.json'; a.click(); window.URL.revokeObjectURL(url); if (typeof showNotification === 'function') showNotification('Data backed up successfully!', 'success'); }).catch(error => { console.error('Error backing up data:', error); if (typeof showNotification === 'function') showNotification('Failed to backup data: ' + error.message, 'error'); }); }
+  function backupData() {
+    Promise.all([
+      api.getSales(),
+      api.getDepartmentSales(),
+      api.getPayments('/payments'),
+      api.getCategoryPayments(),
+      api.getSuppliers(),
+      api.getBranches(),
+      api.getCategories(),
+      api.getGroups(),
+      api.getUsers(),
+      api.getSettings(),
+      api.getDepartments(),
+      api.getSubDepartments(),
+      api.getEmployees(),
+      api.getEmployeeDepartments(),
+      api.getEmployeeDesignations()
+    ]).then(([
+      salesData,
+      departmentSalesData,
+      paymentsData,
+      categoryPaymentsData,
+      suppliersData,
+      branchesData,
+      categoriesData,
+      groupsData,
+      usersData,
+      settingsData,
+      departmentsData,
+      subDepartmentsData,
+      employeesData,
+      employeeDepartmentsData,
+      employeeDesignationsData
+    ]) => {
+      const backup = {
+        salesData,
+        departmentSalesData,
+        paymentsData,
+        categoryPaymentsData,
+        suppliersData,
+        branchesData,
+        categoriesData,
+        groupsData,
+        usersData,
+        settingsData,
+        departmentsData,
+        subDepartmentsData,
+        employeesData,
+        employeeDepartmentsData,
+        employeeDesignationsData,
+        timestamp: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'backup_' + new Date().toISOString().split('T')[0] + '.json';
+      a.click();
+      window.URL.revokeObjectURL(url);
+      if (typeof showNotification === 'function') showNotification('Data backed up successfully!', 'success');
+    }).catch(error => {
+      console.error('Error backing up data:', error);
+      if (typeof showNotification === 'function') showNotification('Failed to backup data: ' + (error.message || error), 'error');
+    });
+  }
 
   async function restoreData(e) {
     const file = e.target.files[0];

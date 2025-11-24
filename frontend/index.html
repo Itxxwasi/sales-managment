@@ -2388,11 +2388,12 @@
         
         /* Branch KPIs should always show label left / value right */
         .branch-main-kpis .branch-kpi-item {
-            flex-direction: row;
+            display: grid;
+            grid-template-columns: 1fr auto;
             align-items: center;
-            justify-content: space-between;
             text-align: left;
-            gap: 10px;
+            gap: 8px;
+            width: 100%;
         }
         
         .branch-main-kpis .branch-kpi-label {
@@ -2401,7 +2402,10 @@
             border-radius: 8px 0 0 8px;
             width: auto;
             min-width: 0;
-            flex: 1 1 auto;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .branch-main-kpis .branch-kpi-value {
@@ -2410,8 +2414,28 @@
             border-radius: 0 8px 8px 0;
             width: auto;
             min-width: 0;
-            margin-left: auto;
-            flex: 0 1 auto;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-variant-numeric: tabular-nums;
+            max-width: 100%;
+        }
+
+        .branch-main-kpis .branch-kpi-item.stacked {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 6px;
+        }
+        .branch-main-kpis .branch-kpi-item.stacked .branch-kpi-label {
+            border-radius: 8px 8px 0 0;
+            width: 100%;
+            text-align: left;
+        }
+        .branch-main-kpis .branch-kpi-item.stacked .branch-kpi-value {
+            border-radius: 0 0 8px 8px;
+            width: 100%;
+            text-align: right;
         }
         
         /* Ensure tighter spacing on very small screens */
@@ -2441,6 +2465,12 @@
             text-align: center;
             width: 100%;
         }
+
+        /* Force left/right alignment inside branch-main-kpis */
+        .branch-main-kpis .branch-kpi-item .branch-kpi-label { justify-content: flex-start !important; text-align: left !important; }
+        .branch-main-kpis .branch-kpi-item .branch-kpi-value { justify-content: flex-end !important; text-align: right !important; }
+        .branch-main-kpis .branch-kpi-item.stacked .branch-kpi-label { justify-content: flex-start !important; text-align: left !important; }
+        .branch-main-kpis .branch-kpi-item.stacked .branch-kpi-value { justify-content: flex-end !important; text-align: right !important; }
         
         /* Branch KPI label/value widths already set for all screens */
         
@@ -2482,22 +2512,15 @@
         
         /* Branch KPI text handling */
         .branch-main-kpis .branch-kpi-label {
-            white-space: normal;
-            overflow: visible;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            flex: 1 1 55%;
-            text-align: left;
-            justify-content: flex-start;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .branch-main-kpis .branch-kpi-value {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            flex: 0 1 45%;
-            text-align: right;
-            justify-content: flex-end;
         }
         
         @media (max-width: 1400px) {
@@ -2532,18 +2555,8 @@
         }
         
         @media (max-width: 768px) {
-            .branch-main-kpis .branch-kpi-item .branch-kpi-label {
-                border-radius: 8px 0 0 8px !important;
-                width: auto !important;
-                max-width: 60% !important;
-                text-align: left !important;
-            }
-            .branch-main-kpis .branch-kpi-item .branch-kpi-value {
-                border-radius: 0 8px 8px 0 !important;
-                width: auto !important;
-                max-width: 40% !important;
-                margin-left: auto !important;
-                text-align: right !important;
+            .branch-main-kpis .branch-kpi-item {
+                gap: 6px;
             }
         }
         
@@ -17501,8 +17514,8 @@
                                                         </div>
                                                         <div class="card-body" style="padding: 20px; background-color: #ffffff;">
                                                             <!-- Department Summary -->
-                                                            <div class="row g-2 mb-3">
-                                                                <div class="col-6 col-md-3">
+                                                        <div class="row g-2 mb-3">
+                                                                <div class="col-12 col-sm-6 col-md-3">
                                                                     <div class="branch-kpi-item">
                                                                         <div class="branch-kpi-label kpi-sales-label">
                                                                             GROSS SALE
@@ -17512,7 +17525,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-6 col-md-3">
+                                                                <div class="col-12 col-sm-6 col-md-3">
                                                                     <div class="branch-kpi-item">
                                                                         <div class="branch-kpi-label">
                                                                             DISCOUNT VALUE
@@ -17522,7 +17535,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-6 col-md-3">
+                                                                <div class="col-12 col-sm-6 col-md-3">
                                                                     <div class="branch-kpi-item">
                                                                         <div class="branch-kpi-label kpi-cost-label">
                                                                             DISCOUNT %
@@ -17532,7 +17545,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-6 col-md-3">
+                                                                <div class="col-12 col-sm-6 col-md-3">
                                                                     <div class="branch-kpi-item">
                                                                         <div class="branch-kpi-label kpi-margin-label">
                                                                             NET SALE
@@ -17542,7 +17555,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-6 col-md-3">
+                                                                <div class="col-12 col-sm-6 col-md-3">
                                                                     <div class="branch-kpi-item">
                                                                         <div class="branch-kpi-label">
                                                                             RETURN
@@ -17552,7 +17565,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-6 col-md-3">
+                                                                <div class="col-12 col-sm-6 col-md-3">
                                                                     <div class="branch-kpi-item">
                                                                         <div class="branch-kpi-label kpi-profit-label">
                                                                             SALE VALUE
@@ -17562,7 +17575,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-6 col-md-3">
+                                                                <div class="col-12 col-sm-6 col-md-3">
                                                                     <div class="branch-kpi-item">
                                                                         <div class="branch-kpi-label">
                                                                             GST
@@ -17722,7 +17735,7 @@
                                                     </div>
                                                     <div class="card-body" style="padding: 20px; background-color: #ffffff;">
                                                         <div class="row g-2">
-                                                            <div class="col-6">
+                                                            <div class="col-12 col-sm-6">
                                                                 <div class="branch-kpi-item">
                                                                     <div class="branch-kpi-label kpi-sales-label">
                                                                         SALES
@@ -17732,7 +17745,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-12 col-sm-6">
                                                                 <div class="branch-kpi-item">
                                                                     <div class="branch-kpi-label kpi-cost-label">
                                                                         COST
@@ -17742,7 +17755,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-12 col-sm-6">
                                                                 <div class="branch-kpi-item">
                                                                     <div class="branch-kpi-label kpi-profit-label">
                                                                         PROFIT
@@ -17752,7 +17765,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-6">
+                                                            <div class="col-12 col-sm-6">
                                                                 <div class="branch-kpi-item">
                                                                     <div class="branch-kpi-label kpi-margin-label">
                                                                         MARGIN
@@ -17844,6 +17857,12 @@
                 });
             });
             }, 100);
+
+            setTimeout(() => {
+                if (typeof window.applyKpiLayoutForAll === 'function') {
+                    window.applyKpiLayoutForAll();
+                }
+            }, 0);
         }
         
         // Load category breakdown - Updated
@@ -38521,3 +38540,45 @@ sortedBranches.forEach(data => {
 
 
 
+        function applyKpiLayoutForAll() {
+            const items = document.querySelectorAll('.branch-main-kpis .branch-kpi-item');
+            items.forEach(item => {
+                const label = item.querySelector('.branch-kpi-label');
+                const value = item.querySelector('.branch-kpi-value');
+                if (!label || !value) return;
+                const containerWidth = item.clientWidth;
+                const contentWidth = label.scrollWidth + value.scrollWidth + 16;
+                if (contentWidth > containerWidth) {
+                    item.classList.add('stacked');
+                } else {
+                    item.classList.remove('stacked');
+                }
+            });
+        }
+
+        if (!window.__kpiLayoutBound) {
+            window.__kpiLayoutBound = true;
+            window.applyKpiLayoutForAll = applyKpiLayoutForAll;
+            window.addEventListener('resize', function() {
+                clearTimeout(window.__kpiLayoutTimer);
+                window.__kpiLayoutTimer = setTimeout(applyKpiLayoutForAll, 100);
+            });
+            const init = () => {
+                applyKpiLayoutForAll();
+                const containers = ['warehouseBranchCardsContainer','shopBranchCardsContainer']
+                    .map(id => document.getElementById(id))
+                    .filter(Boolean);
+                containers.forEach(c => {
+                    const obs = new MutationObserver(() => {
+                        clearTimeout(window.__kpiLayoutTimer);
+                        window.__kpiLayoutTimer = setTimeout(applyKpiLayoutForAll, 50);
+                    });
+                    obs.observe(c, { childList: true, subtree: true });
+                });
+            };
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => setTimeout(init, 0));
+            } else {
+                setTimeout(init, 0);
+            }
+        }
