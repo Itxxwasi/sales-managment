@@ -1499,6 +1499,7 @@ app.post('/api/departments', authenticate, isAdmin, checkDatabaseConnection, asy
       branchId, 
       description: description || '',
       sequence: req.body.sequence !== undefined ? req.body.sequence : defaultSequence,
+      marginDedPercent: req.body.marginDedPercent !== undefined ? req.body.marginDedPercent : 0,
       showInIncomeStatement: req.body.showInIncomeStatement !== undefined ? req.body.showInIncomeStatement : true
     });
     
@@ -1542,6 +1543,7 @@ app.put('/api/departments/:id', authenticate, isAdmin, checkDatabaseConnection, 
     if (branchId) updateData.branchId = branchId;
     if (description !== undefined) updateData.description = description;
     if (req.body.sequence !== undefined) updateData.sequence = req.body.sequence;
+    if (req.body.marginDedPercent !== undefined) updateData.marginDedPercent = req.body.marginDedPercent;
     if (req.body.showInIncomeStatement !== undefined) updateData.showInIncomeStatement = req.body.showInIncomeStatement;
     
     const updatedDepartment = await Department.findByIdAndUpdate(
@@ -3052,7 +3054,7 @@ app.get('/api/reports/income-statement', authenticate, async (req, res) => {
     }
     
     const departments = await Department.find(departmentFilter)
-      .select('name _id showInIncomeStatement sequence')
+      .select('name _id showInIncomeStatement sequence marginDedPercent')
       .sort({ sequence: 1, name: 1 })
       .lean();
     console.log('✅ Found', departments.length, 'departments with showInIncomeStatement: true or undefined');
@@ -3109,7 +3111,7 @@ app.get('/api/reports/income-statement', authenticate, async (req, res) => {
     // Get sub-departments - only those whose parent departments have showInIncomeStatement: true or field doesn't exist
     // Note: We already filtered departments above, so we can safely get sub-departments
     let subDepartments = await SubDepartment.find(subDeptFilter)
-      .populate('departmentId', 'name showInIncomeStatement sequence')
+      .populate('departmentId', 'name showInIncomeStatement sequence marginDedPercent')
       .select('name departmentId branchId sequence')
       .lean();
     
@@ -3231,6 +3233,7 @@ app.get('/api/reports/income-statement', authenticate, async (req, res) => {
         departmentId: subDept.departmentId?._id || subDept.departmentId,
         departmentName: subDept.departmentId?.name || '',
         departmentSequence: subDept.departmentId?.sequence || 0,
+        departmentMarginDedPercent: subDept.departmentId?.marginDedPercent || 0,
         sales: sales, 
         returns: salesData.returns || 0, 
         gst: salesData.gst || 0, 

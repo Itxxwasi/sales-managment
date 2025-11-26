@@ -9745,6 +9745,11 @@
                             <small class="form-text text-muted">Lower numbers appear first in dropdowns and reports</small>
                         </div>
                         <div class="mb-3">
+                            <label for="departmentMarginDed" class="form-label">Dept Margin Ded %</label>
+                            <input type="number" class="form-control" id="departmentMarginDed" min="0" max="100" step="0.01" placeholder="Enter percentage value">
+                            <small class="form-text text-muted">Enter the margin deduction percentage for this department</small>
+                        </div>
+                        <div class="mb-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="departmentShowInIncomeStatement">
                                 <label class="form-check-label" for="departmentShowInIncomeStatement">
@@ -21785,11 +21790,17 @@ sortedBranches.forEach(data => {
                 return;
             }
             
+            const marginDedInput = document.getElementById('departmentMarginDed');
+            const marginDedValue = marginDedInput && marginDedInput.value.trim() !== '' 
+                ? parseFloat(marginDedInput.value) 
+                : 0;
+            
             const departmentData = {
                 name: document.getElementById('departmentName').value,
                 branchId: branchId,
                 description: document.getElementById('departmentDescription').value,
                 sequence: parseInt(document.getElementById('departmentSequence').value) || 0,
+                marginDedPercent: !isNaN(marginDedValue) ? marginDedValue : 0,
                 showInIncomeStatement: document.getElementById('departmentShowInIncomeStatement').checked
             };
             
@@ -21867,6 +21878,15 @@ sortedBranches.forEach(data => {
                     if (deptDescInput) deptDescInput.value = department.description || '';
                     const deptSeqInput = document.getElementById('departmentSequence');
                     if (deptSeqInput) deptSeqInput.value = department.sequence !== undefined ? department.sequence : 0;
+                    const deptMarginDedInput = document.getElementById('departmentMarginDed');
+                    if (deptMarginDedInput) {
+                        // Handle both null/undefined and 0 values - 0 is a valid value
+                        if (department.marginDedPercent !== undefined && department.marginDedPercent !== null) {
+                            deptMarginDedInput.value = department.marginDedPercent;
+                        } else {
+                            deptMarginDedInput.value = '';
+                        }
+                    }
                     
                     // Set checkbox value - must be done after all other form fields are set
                     // CRITICAL: This must reflect the ACTUAL saved value from database
@@ -21926,11 +21946,17 @@ sortedBranches.forEach(data => {
                 return;
             }
             
+            const marginDedInput = document.getElementById('departmentMarginDed');
+            const marginDedValue = marginDedInput && marginDedInput.value.trim() !== '' 
+                ? parseFloat(marginDedInput.value) 
+                : 0;
+            
             const departmentData = {
                 name: document.getElementById('departmentName').value,
                 branchId: branchId,
                 description: document.getElementById('departmentDescription').value,
                 sequence: parseInt(document.getElementById('departmentSequence').value) || 0,
+                marginDedPercent: !isNaN(marginDedValue) ? marginDedValue : 0,
                 showInIncomeStatement: document.getElementById('departmentShowInIncomeStatement').checked
             };
             

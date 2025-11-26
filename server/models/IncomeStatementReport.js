@@ -16,6 +16,7 @@ const IncomeStatementReportSchema = new mongoose.Schema(
       departmentId: mongoose.Schema.Types.ObjectId,
       departmentName: String,
       departmentSequence: Number,
+      departmentMarginDedPercent: Number,
       sales: Number,
       returns: Number,
       gst: Number,

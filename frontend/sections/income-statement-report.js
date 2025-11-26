@@ -153,11 +153,8 @@
   function setDefaultDates(){
     var from = document.getElementById('isrFromDate');
     var to = document.getElementById('isrToDate');
-    var now = new Date();
-    var start = new Date(now.getFullYear(), now.getMonth(), 1);
-    var end = new Date(now.getFullYear(), now.getMonth()+1, 0);
+    // Don't auto-set dates - let user select manually
     if (from) {
-      if (!from.value) from.value = start.toISOString().slice(0,10);
       // Add change listener for auto-refresh
       from.addEventListener('change', function(){
         var branchSelect = document.getElementById('isrBranchSelect');
@@ -168,7 +165,6 @@
       });
     }
     if (to) {
-      if (!to.value) to.value = end.toISOString().slice(0,10);
       // Add change listener for auto-refresh
       to.addEventListener('change', function(){
         var branchSelect = document.getElementById('isrBranchSelect');
@@ -321,7 +317,7 @@
     if (!rows.length){
       var tr = document.createElement('tr');
       var td = document.createElement('td');
-      td.colSpan = 12; td.className = 'text-center text-muted py-4'; td.textContent = 'No data';
+      td.colSpan = 13; td.className = 'text-center text-muted py-4'; td.textContent = 'No data';
       tr.appendChild(td); tbody.appendChild(tr);
       updateSummary({});
       return;
@@ -378,7 +374,7 @@
       deptTr.className = 'isr-dept-header';
       deptTr.style.backgroundColor = '#e9ecef';
       deptTr.style.fontWeight = 'bold';
-      deptTr.innerHTML = '<td colspan="12" style="padding: 12px; font-size: 1.1em; border: 1px solid #000000;"><i class="fas fa-building me-2"></i>' + dept.name + '</td>';
+      deptTr.innerHTML = '<td colspan="13" style="padding: 12px; font-size: 1.1em; border: 1px solid #000000; color: #000000; background-color: #e9ecef;"><i class="fas fa-building me-2"></i>' + dept.name + '</td>';
       tbody.appendChild(deptTr);
       
       // Add column header row for this department
@@ -395,7 +391,8 @@
         '<th class="text-end" style="padding: 10px 8px; text-align: right; vertical-align: middle; background-color: #000000; color: #ffffff; border: 1px solid #ffffff;">G.P</th>' +
         '<th class="text-end" style="padding: 10px 8px; text-align: right; vertical-align: middle; background-color: #000000; color: #ffffff; border: 1px solid #ffffff;">DISC %</th>' +
         '<th class="text-end" style="padding: 10px 8px; text-align: right; vertical-align: middle; background-color: #000000; color: #ffffff; border: 1px solid #ffffff;">Discount Value</th>' +
-        '<th class="text-end" style="padding: 10px 8px; text-align: right; vertical-align: middle; background-color: #000000; color: #ffffff; border: 1px solid #ffffff;">GP Rate %</th>';
+        '<th class="text-end" style="padding: 10px 8px; text-align: right; vertical-align: middle; background-color: #000000; color: #ffffff; border: 1px solid #ffffff;">GP Rate %</th>' +
+        '<th class="text-center" style="padding: 10px 8px; text-align: center; vertical-align: middle; background-color: #000000; color: #ffffff; border: 1px solid #ffffff;">MARGIN DED %</th>';
       tbody.appendChild(headerTr);
       
       // Initialize department totals
@@ -411,7 +408,19 @@
         discount: 0
       };
       
+      // Get marginDedPercent once for the department (for rowspan merge)
+      var deptMarginDedPercent = dept.items.length > 0 && dept.items[0].departmentMarginDedPercent ? Number(dept.items[0].departmentMarginDedPercent) : 0;
+      var deptRowCount = 0; // Count valid sub-department rows for rowspan
+      
+      // First pass: count valid rows
+      dept.items.forEach(function(r){
+        if (r.subDepartment && r.subDepartment.name) {
+          deptRowCount++;
+        }
+      });
+      
       // Add sub-department rows for this department
+      var isFirstRow = true;
       dept.items.forEach(function(r){
         // Skip items without sub-department data
         if (!r.subDepartment || !r.subDepartment.name) {
@@ -448,7 +457,9 @@
         var tr = document.createElement('tr');
         tr.className = 'isr-subdept-row';
         tr.setAttribute('data-dept-id', deptId);
-        tr.innerHTML = '<td style="padding-left: 30px; padding-right: 20px; text-align: left; border: 1px solid #000000;"><strong>'+r.subDepartment.name+'</strong></td>'+
+        
+        // Build row HTML - include MARGIN DED % only in first row with rowspan
+        var rowHtml = '<td style="padding-left: 30px; padding-right: 20px; text-align: left; border: 1px solid #000000;"><strong>'+r.subDepartment.name+'</strong></td>'+
           '<td class="text-end" style="text-align: right; border: 1px solid #000000;">'+fmt(sales)+'</td>'+
           '<td class="text-end" style="text-align: right; border: 1px solid #000000;">'+fmt(returns)+'</td>'+
           '<td class="text-end" style="text-align: right; border: 1px solid #000000;">'+fmt(gst)+'</td>'+
@@ -460,6 +471,14 @@
           '<td class="text-end" style="text-align: right; border: 1px solid #000000;" data-val="discountPct">'+(discountPct.toFixed(2))+'</td>'+
           '<td class="text-end" style="text-align: right; border: 1px solid #000000;" data-val="discount">'+fmt(discountAmt)+'</td>'+
           '<td class="text-end" style="text-align: right; border: 1px solid #000000;" data-val="rate">'+(gpRate.toFixed(2))+'</td>';
+        
+        // Add MARGIN DED % only in first row with rowspan to merge across all rows
+        if (isFirstRow && deptRowCount > 0) {
+          rowHtml += '<td class="text-center" style="text-align: center; border: 1px solid #000000; vertical-align: middle; padding: 10px 8px;" rowspan="'+deptRowCount+'" data-val="marginDed"><strong>'+(deptMarginDedPercent > 0 ? deptMarginDedPercent.toFixed(2) + '%' : '')+'</strong></td>';
+          isFirstRow = false;
+        }
+        
+        tr.innerHTML = rowHtml;
         tbody.appendChild(tr);
         rowIndex++;
       });
@@ -481,7 +500,8 @@
           '<td class="text-end" style="font-weight: bold; background-color: #2C6EBA; color: #ffffff; border: 1px solid #ffffff;" data-val="gp">'+fmt(deptTotals.gp)+'</td>'+
           '<td class="text-end" style="font-weight: bold; background-color: #2C6EBA; color: #ffffff; border: 1px solid #ffffff;" data-val="discountPct">'+(deptTotals.sales > 0 ? (deptTotals.discount * 100 / deptTotals.sales).toFixed(2) : '0.00')+'</td>'+
           '<td class="text-end" style="font-weight: bold; background-color: #2C6EBA; color: #ffffff; border: 1px solid #ffffff;" data-val="discount">'+fmt(deptTotals.discount)+'</td>'+
-          '<td class="text-end" style="font-weight: bold; background-color: #2C6EBA; color: #ffffff; border: 1px solid #ffffff;" data-val="rate">'+(deptTotals.net > 0 ? (deptTotals.gp * 100 / deptTotals.net).toFixed(2) : '0.00')+'</td>';
+          '<td class="text-end" style="font-weight: bold; background-color: #2C6EBA; color: #ffffff; border: 1px solid #ffffff;" data-val="rate">'+(deptTotals.net > 0 ? (deptTotals.gp * 100 / deptTotals.net).toFixed(2) : '0.00')+'</td>'+
+          '<td class="text-center" style="font-weight: bold; background-color: #2C6EBA; color: #ffffff; border: 1px solid #ffffff; text-align: center; padding: 10px 8px;" data-val="marginDed"></td>';
         tbody.appendChild(grandTotalTr);
         
         // Recalculate Sub Total from actual input field values
@@ -612,6 +632,11 @@
       if (discountCell) discountCell.textContent = fmt(deptTotals.discount);
       var rateCell = grandTotalRow.querySelector('[data-val="rate"]');
       if (rateCell) rateCell.textContent = grandTotalRate.toFixed(2);
+      var marginDedCell = grandTotalRow.querySelector('[data-val="marginDed"]');
+      if (marginDedCell) {
+        // Sub Total row should have empty MARGIN DED % (as per reference image)
+        marginDedCell.textContent = '';
+      }
     }
   }
 
@@ -646,9 +671,9 @@
     var totalRow = document.querySelector('tfoot .isr-total-row');
     if (totalRow) {
       Array.from(totalRow.cells).forEach(function(cell) {
-        cell.style.backgroundColor = '#2C6E8A';
+        cell.style.backgroundColor = '#000000';
         cell.style.color = '#ffffff';
-        cell.style.border = '1px solid #000000';
+        cell.style.border = '1px solid #ffffff';
       });
     }
     setEl('isrTotalSales', totals.sales);
@@ -663,18 +688,26 @@
     var discountPctEl = document.getElementById('isrTotalDiscountPct');
     if (discountPctEl) {
       discountPctEl.textContent = discountPct.toFixed(2);
-      discountPctEl.style.backgroundColor = '#2C6E8A';
+      discountPctEl.style.backgroundColor = '#000000';
       discountPctEl.style.color = '#ffffff';
-      discountPctEl.style.border = '1px solid #000000';
+      discountPctEl.style.border = '1px solid #ffffff';
     }
     setEl('isrTotalDiscount', totals.discount);
     var avgRate = totals.net>0 ? (totals.gp*100/totals.net) : 0;
     var el = document.getElementById('isrAvgGpRate');
     if (el) {
       el.textContent = avgRate.toFixed(2);
-      el.style.backgroundColor = '#2C6E8A';
+      el.style.backgroundColor = '#000000';
       el.style.color = '#ffffff';
-      el.style.border = '1px solid #000000';
+      el.style.border = '1px solid #ffffff';
+    }
+    // Leave marginDed empty for grand total (as shown in reference image)
+    var marginDedEl = document.getElementById('isrTotalMarginDed');
+    if (marginDedEl) {
+      marginDedEl.textContent = '';
+      marginDedEl.style.backgroundColor = '#000000';
+      marginDedEl.style.color = '#ffffff';
+      marginDedEl.style.border = '1px solid #ffffff';
     }
     updateSummary({ totalSale: totals.sales, totalReturns: totals.returns, netSales: totals.net, cost: totals.cost, grossProfit: totals.gross, expenses: 0, shortCash: 0, netProfit: totals.gp });
   }
@@ -832,7 +865,7 @@
             '<td class="text-end">' + (netProfit.toLocaleString()) + '</td>' +
             '<td>' + (savedBy || 'Unknown') + '</td>' +
             '<td>' +
-              '<button class="btn btn-sm btn-primary me-1" onclick="viewSavedReport(\'' + reportId + '\')"><i class="fas fa-eye"></i> View</button>' +
+              '<button class="btn btn-sm btn-warning me-1" onclick="editSavedReport(\'' + reportId + '\')"><i class="fas fa-edit"></i> Edit</button>' +
               '<button class="btn btn-sm btn-info me-1" onclick="printSavedReport(\'' + reportId + '\')"><i class="fas fa-print"></i> Print</button>' +
               '<button class="btn btn-sm btn-danger" onclick="deleteSavedReport(\'' + reportId + '\')"><i class="fas fa-trash"></i> Delete</button>' +
             '</td>' +
@@ -890,10 +923,85 @@
     });
   };
   
+  // Edit Saved Report
+  window.editSavedReport = function(reportId){
+    api.request('/reports/income-statement/' + reportId).then(function(report){
+      // Switch to table tab and render the report for editing
+      switchTab('table');
+      
+      // Store the original report ID for potential update
+      window.editingReportId = reportId;
+      
+      window.isrData = {
+        items: report.items || [],
+        summary: report.summary || {},
+        branch: report.branch || report.branchId || null,
+        meta: {
+          from: report.fromDate,
+          to: report.toDate,
+          branchId: report.branchId && report.branchId._id ? report.branchId._id : report.branchId,
+          departmentId: report.departmentId && report.departmentId._id ? report.departmentId._id : report.departmentId
+        }
+      };
+      
+      // Set date fields
+      var fromDateEl = document.getElementById('isrFromDate');
+      var toDateEl = document.getElementById('isrToDate');
+      var branchEl = document.getElementById('isrBranch');
+      
+      if (fromDateEl && report.fromDate) {
+        var fromDate = new Date(report.fromDate);
+        fromDateEl.value = fromDate.toISOString().split('T')[0];
+      }
+      if (toDateEl && report.toDate) {
+        var toDate = new Date(report.toDate);
+        toDateEl.value = toDate.toISOString().split('T')[0];
+      }
+      if (branchEl && report.branchId) {
+        var branchId = report.branchId._id || report.branchId;
+        branchEl.value = branchId;
+      }
+      
+      // Render the report data
+      render(window.isrData);
+      updateSummary(window.isrData.summary);
+      
+      // Set expenses and short cash
+      var expensesEl = document.getElementById('isrSummaryExpenses');
+      var shortCashEl = document.getElementById('isrSummaryShortCash');
+      if (expensesEl && report.summary) expensesEl.value = report.summary.expenses || 0;
+      if (shortCashEl && report.summary) shortCashEl.value = report.summary.shortCash || 0;
+      recalculateNetProfit();
+      
+      // Close list view
+      var listView = document.getElementById('isrSavedReportsList');
+      if (listView) {
+        listView.style.display = 'none';
+      }
+      
+      if (typeof showNotification === 'function') showNotification('Report loaded for editing. Make your changes and save.', 'info');
+    }).catch(function(error){
+      console.error('Error loading report for editing:', error);
+      if (typeof showNotification === 'function') showNotification('Failed to load report for editing', 'error');
+    });
+  };
+  
   // Print Saved Report
   window.printSavedReport = function(reportId){
     api.request('/reports/income-statement/' + reportId).then(function(report){
-      printReport(report);
+      // Transform saved report data to match expected format (same as viewSavedReport)
+      var formattedReport = {
+        items: report.items || [],
+        summary: report.summary || {},
+        branch: report.branch || report.branchId || null,
+        meta: {
+          from: report.fromDate,
+          to: report.toDate,
+          branchId: report.branchId && report.branchId._id ? report.branchId._id : report.branchId,
+          departmentId: report.departmentId && report.departmentId._id ? report.departmentId._id : report.departmentId
+        }
+      };
+      printReport(formattedReport);
     }).catch(function(error){
       console.error('Error loading report for print:', error);
       if (typeof showNotification === 'function') showNotification('Failed to load report for printing', 'error');
@@ -975,13 +1083,16 @@
     var deptGroups = {};
     var grandTotal = { netSale: 0, gp: 0, discountAmount: 0, avgSalePerDay: 0 };
     
+    // Store original items array for reference when building print rows
+    var originalItems = items;
+    
     items.forEach(function(item){
       var deptName = item.departmentName || 'Uncategorized';
       if (!deptGroups[deptName]) {
         deptGroups[deptName] = {
           name: deptName,
           items: [],
-          totals: { netSale: 0, gp: 0, discountAmount: 0, avgSalePerDay: 0 }
+          totals: { netSale: 0, gp: 0, discountAmount: 0, avgSalePerDay: 0, marginDedPercent: 0 }
         };
       }
       
@@ -990,13 +1101,27 @@
       var gp = net - cost;
       var avgSalePerDay = daysInMonth > 0 ? (net / daysInMonth) : 0;
       
+      // Store marginDedPercent from first item (same for all items in department)
+      // Check both departmentMarginDedPercent and marginDedPercent for compatibility
+      if (deptGroups[deptName].items.length === 0) {
+        var marginDed = item.departmentMarginDedPercent !== undefined ? item.departmentMarginDedPercent : 
+                       (item.marginDedPercent !== undefined ? item.marginDedPercent : 0);
+        deptGroups[deptName].totals.marginDedPercent = marginDed || 0;
+      }
+      
+      // Get marginDedPercent from item (check both possible field names)
+      var itemMarginDed = item.departmentMarginDedPercent !== undefined ? item.departmentMarginDedPercent : 
+                         (item.marginDedPercent !== undefined ? item.marginDedPercent : 0);
+      
       deptGroups[deptName].items.push({
         subDept: item.subDepartment && item.subDepartment.name || '',
         netSale: net,
         gp: gp,
         discountPercent: item.discountPercent || 0,
         gpRate: net > 0 ? (gp * 100 / net) : 0,
-        avgSalePerDay: avgSalePerDay
+        avgSalePerDay: avgSalePerDay,
+        marginDedPercent: itemMarginDed || 0,
+        departmentMarginDedPercent: itemMarginDed || 0 // Store both for compatibility
       });
       
       deptGroups[deptName].totals.netSale += net;
@@ -1028,78 +1153,118 @@
       
       // Department header
       tableRows += '<thead>';
-      tableRows += '<tr><th colspan="6" style="background-color: #d3d3d3; padding: 8px 6px; font-weight: bold; border: 1px solid #000; text-align: left; font-size: 10px;">' + dept.name + '</th></tr>';
-      tableRows += '<tr style="background-color: #808080; color: #fff;">';
-      tableRows += '<th style="padding: 8px 6px; border: 1px solid #fff; text-align: left; font-size: 9px;">Sub Department</th>';
-      tableRows += '<th style="padding: 8px 6px; border: 1px solid #fff; text-align: right; font-size: 9px;">Average Sale Per Day</th>';
-      tableRows += '<th style="padding: 8px 6px; border: 1px solid #fff; text-align: right; font-size: 9px;">NET SALE</th>';
-      tableRows += '<th style="padding: 8px 6px; border: 1px solid #fff; text-align: right; font-size: 9px;">G.P</th>';
-      tableRows += '<th style="padding: 8px 6px; border: 1px solid #fff; text-align: right; font-size: 9px;">DISC %</th>';
-      tableRows += '<th style="padding: 8px 6px; border: 1px solid #fff; text-align: right; font-size: 9px;">GP RATE</th>';
+      tableRows += '<tr style="background-color: #00685c; color: #fff;">';
+      tableRows += '<th style="padding: 10px 8px; border: 1px solid #ffffff; text-align: left; font-size: 11px; background-color: #00685c;">CATEGORIES</th>';
+      tableRows += '<th style="padding: 10px 8px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">AVERAGE SALE PER DAY</th>';
+      tableRows += '<th style="padding: 10px 8px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">NET SALE</th>';
+      tableRows += '<th style="padding: 10px 8px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">G.P</th>';
+      tableRows += '<th style="padding: 10px 8px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">DISC %</th>';
+      tableRows += '<th style="padding: 10px 8px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">GP RATE</th>';
+      tableRows += '<th style="padding: 10px 8px; border: 1px solid #ffffff; text-align: center; font-size: 11px; background-color: #00685c; width: 60px; min-width: 60px; max-width: 60px;">MARGIN DED %</th>';
       tableRows += '</tr>';
       tableRows += '</thead><tbody>';
       
       // Sub-department rows
-      dept.items.forEach(function(item){
+      var isFirstRow = true;
+      dept.items.forEach(function(item, index){
         tableRows += '<tr>';
-        tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: left; font-size: 9px;">' + (item.subDept || '') + '</td>';
-        tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (Math.round(item.avgSalePerDay).toLocaleString()) + '</td>';
-        tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (item.netSale.toLocaleString()) + '</td>';
-        tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (item.gp.toLocaleString()) + '</td>';
-        tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (item.discountPercent.toFixed(2)) + '</td>';
-        tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (item.gpRate.toFixed(2)) + '</td>';
+        tableRows += '<td style="padding: 9px 7px; border: 1px solid #000; text-align: left; font-size: 11px;">' + (item.subDept || '') + '</td>';
+        tableRows += '<td style="padding: 9px 7px; border: 1px solid #000; text-align: right; font-size: 11px;">' + (Math.round(item.avgSalePerDay).toLocaleString()) + '</td>';
+        tableRows += '<td style="padding: 9px 7px; border: 1px solid #000; text-align: right; font-size: 11px;">' + (item.netSale.toLocaleString()) + '</td>';
+        tableRows += '<td style="padding: 9px 7px; border: 1px solid #000; text-align: right; font-size: 11px;">' + (item.gp.toLocaleString()) + '</td>';
+        tableRows += '<td style="padding: 9px 7px; border: 1px solid #000; text-align: right; font-size: 11px;">' + (item.discountPercent.toFixed(2)) + '</td>';
+        tableRows += '<td style="padding: 9px 7px; border: 1px solid #000; text-align: right; font-size: 11px;">' + (item.gpRate.toFixed(2)) + '</td>';
+        // Add MARGIN DED % only in first row with rowspan to merge across all rows
+        if (isFirstRow && dept.items.length > 0) {
+          // Try multiple possible field names for marginDedPercent
+          // First check dept.totals, then check first item in various ways
+          var marginDedValue = null;
+          if (dept.totals.marginDedPercent !== undefined && dept.totals.marginDedPercent !== null) {
+            marginDedValue = Number(dept.totals.marginDedPercent);
+          } else if (dept.items[0]) {
+            if (dept.items[0].marginDedPercent !== undefined && dept.items[0].marginDedPercent !== null) {
+              marginDedValue = Number(dept.items[0].marginDedPercent);
+            } else if (dept.items[0].departmentMarginDedPercent !== undefined && dept.items[0].departmentMarginDedPercent !== null) {
+              marginDedValue = Number(dept.items[0].departmentMarginDedPercent);
+            }
+          }
+          
+          // Also try to get from original items array if available
+          if ((marginDedValue === null || marginDedValue === 0 || isNaN(marginDedValue)) && originalItems && originalItems.length > 0) {
+            // Find matching item by department name and sub-department
+            var matchingItem = originalItems.find(function(origItem) {
+              return origItem.departmentName === dept.name && 
+                     origItem.subDepartment && 
+                     origItem.subDepartment.name === dept.items[0].subDept;
+            });
+            if (matchingItem) {
+              if (matchingItem.departmentMarginDedPercent !== undefined && matchingItem.departmentMarginDedPercent !== null) {
+                marginDedValue = Number(matchingItem.departmentMarginDedPercent);
+              } else if (matchingItem.marginDedPercent !== undefined && matchingItem.marginDedPercent !== null) {
+                marginDedValue = Number(matchingItem.marginDedPercent);
+              }
+            }
+          }
+          
+          // Display the value (show even if 0, but format properly)
+          var displayValue = (marginDedValue !== null && marginDedValue !== undefined && !isNaN(marginDedValue)) ? marginDedValue.toFixed(2) + '%' : '';
+          tableRows += '<td style="padding: 9px 7px; border: 1px solid #000; text-align: center; font-size: 11px; font-weight: bold; vertical-align: middle; width: 60px; min-width: 60px; max-width: 60px;" rowspan="' + dept.items.length + '">' + displayValue + '</td>';
+          isFirstRow = false;
+        }
         tableRows += '</tr>';
       });
       
       // Department TOTAL row
-      tableRows += '<tr style="background-color: #d3d3d3; font-weight: bold;">';
-      tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: left; font-size: 9px;">TOTAL</td>';
-      tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (Math.round(dept.totals.avgSalePerDay).toLocaleString()) + '</td>';
-      tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (dept.totals.netSale.toLocaleString()) + '</td>';
-      tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (dept.totals.gp.toLocaleString()) + '</td>';
-      tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (dept.totals.discountAmount.toLocaleString()) + '</td>';
-      tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (dept.totals.gpRate.toFixed(2)) + '</td>';
+      tableRows += '<tr style="background-color: #000000; font-weight: bold; color: #ffffff;">';
+      tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: left; font-size: 11px; color: #ffffff; background-color: #000000;">' + dept.name.toUpperCase() + ' TOTAL</td>';
+      tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; color: #ffffff; background-color: #000000;">' + (Math.round(dept.totals.avgSalePerDay).toLocaleString()) + '</td>';
+      tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; color: #ffffff; background-color: #000000;">' + (dept.totals.netSale.toLocaleString()) + '</td>';
+      tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; color: #ffffff; background-color: #000000;">' + (dept.totals.gp.toLocaleString()) + '</td>';
+      tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; color: #ffffff; background-color: #000000;">' + (dept.totals.discountAmount.toLocaleString()) + '</td>';
+      tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; color: #ffffff; background-color: #000000;">' + (dept.totals.gpRate.toFixed(2)) + '</td>';
+      tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: center; font-size: 11px; color: #ffffff; background-color: #000000; width: 60px; min-width: 60px; max-width: 60px;"></td>';
       tableRows += '</tr>';
       tableRows += '</tbody>';
     });
     
     // GRAND TOTAL row
     tableRows += '<tfoot>';
-    tableRows += '<tr style="background-color: #d3d3d3; font-weight: bold;">';
-    tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: left; font-size: 9px;">GRAND TOTAL</td>';
-    tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (Math.round(grandTotal.avgSalePerDay).toLocaleString()) + '</td>';
-    tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (grandTotal.netSale.toLocaleString()) + '</td>';
-    tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (grandTotal.gp.toLocaleString()) + '</td>';
-    tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (grandTotal.discountAmount.toLocaleString()) + '</td>';
-    tableRows += '<td style="padding: 7px 5px; border: 1px solid #000; text-align: right; font-size: 9px;">' + (grandTotal.gpRate.toFixed(2)) + '</td>';
+    tableRows += '<tr style="background-color: #00685c; color: #ffffff; font-weight: bold;">';
+    tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: left; font-size: 11px; background-color: #00685c;">GRAND TOTAL</td>';
+    tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">' + (Math.round(grandTotal.avgSalePerDay).toLocaleString()) + '</td>';
+    tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">' + (grandTotal.netSale.toLocaleString()) + '</td>';
+    tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">' + (grandTotal.gp.toLocaleString()) + '</td>';
+    tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">' + (grandTotal.discountAmount.toLocaleString()) + '</td>';
+    tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: right; font-size: 11px; background-color: #00685c;">' + (grandTotal.gpRate.toFixed(2)) + '</td>';
+    tableRows += '<td style="padding: 9px 7px; border: 1px solid #ffffff; text-align: center; font-size: 11px; background-color: #00685c;"></td>';
     tableRows += '</tr>';
     tableRows += '</tfoot>';
     
     return '<!DOCTYPE html><html><head><title>Item Category Wise Income Statement</title><style>' +
       '* { box-sizing: border-box; }' +
-      'body { font-family: Arial, sans-serif; margin: 0; padding: 10px; font-size: 11px; }' +
-      'h1 { text-align: center; margin: 0 0 4px 0; font-size: 16px; font-weight: bold; line-height: 1.3; }' +
-      'h2 { text-align: center; margin: 0 0 4px 0; font-size: 14px; line-height: 1.3; }' +
-      'h3 { text-align: center; margin: 0 0 12px 0; font-size: 12px; color: #666; line-height: 1.3; }' +
-      'table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 10px; }' +
+      'body { font-family: Arial, sans-serif; margin: 0; padding: 10px; font-size: 13px; }' +
+      'h1 { text-align: center; margin: 0 0 4px 0; font-size: 18px; font-weight: bold; line-height: 1.3; }' +
+      'h2 { text-align: center; margin: 0 0 4px 0; font-size: 16px; line-height: 1.3; }' +
+      'h3 { text-align: center; margin: 0 0 12px 0; font-size: 14px; color: #666; line-height: 1.3; }' +
+      'table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 12px; }' +
       'th, td { border: 1px solid #000; padding: 8px 6px; text-align: right; line-height: 1.4; }' +
       'th { background-color: #808080; color: #fff; font-weight: bold; }' +
       'td:first-child, th:first-child { text-align: left; }' +
-      '.summary { margin-top: 12px; width: 100%; font-size: 11px; }' +
-      '.summary-header { background-color: #d3d3d3; padding: 10px; font-weight: bold; border: 1px solid #000; text-align: left; font-size: 11px; }' +
-      '.summary-item { display: flex; justify-content: space-between; padding: 8px 10px; border: 1px solid #000; border-top: none; font-size: 11px; line-height: 1.5; }' +
+      '.summary { margin-top: 12px; width: 100%; font-size: 13px; }' +
+      '.summary-header { background-color: #d3d3d3; padding: 10px; font-weight: bold; border: 1px solid #000; text-align: left; font-size: 13px; }' +
+      '.summary-item { display: flex; justify-content: space-between; padding: 8px 10px; border: 1px solid #000; border-top: none; font-size: 13px; line-height: 1.5; }' +
       '.summary-item.total { background-color: #000; color: #fff; font-weight: bold; }' +
       '@media print { ' +
-        'body { margin: 0; padding: 10mm; font-size: 10px; }' +
+        'body { margin: 0; padding: 10mm; font-size: 12px; }' +
         '@page { size: A4; margin: 10mm; }' +
-        'h1 { font-size: 15px; margin-bottom: 4px; }' +
-        'h2 { font-size: 13px; margin-bottom: 4px; }' +
-        'h3 { font-size: 11px; margin-bottom: 10px; }' +
-        'table { font-size: 9px; margin-bottom: 10px; }' +
-        'th, td { padding: 7px 5px; line-height: 1.5; }' +
-        '.summary { margin-top: 10px; font-size: 10px; }' +
-        '.summary-header { padding: 8px; font-size: 10px; }' +
-        '.summary-item { padding: 7px 8px; font-size: 10px; line-height: 1.6; }' +
+        'h1 { font-size: 17px; margin-bottom: 4px; }' +
+        'h2 { font-size: 15px; margin-bottom: 4px; }' +
+        'h3 { font-size: 13px; margin-bottom: 10px; }' +
+        'table { font-size: 11px; margin-bottom: 10px; }' +
+        'th, td { padding: 9px 7px; line-height: 1.5; }' +
+        '.summary { margin-top: 10px; font-size: 12px; }' +
+        '.summary-header { padding: 8px; font-size: 12px; }' +
+        '.summary-item { padding: 7px 8px; font-size: 12px; line-height: 1.6; }' +
         'thead { display: table-header-group; }' +
         'tfoot { display: table-footer-group; }' +
         'tr { page-break-inside: avoid; }' +
@@ -1116,7 +1281,7 @@
         '<div class="summary-item"><span>G PROFIT</span><strong>' + ((summary.grossProfit || 0).toLocaleString()) + '</strong></div>' +
         '<div class="summary-item"><span>EXPENSES</span><strong>' + (expenses.toLocaleString()) + '</strong></div>' +
         '<div class="summary-item"><span>SHORT CASH (-)</span><strong>' + (shortCash.toLocaleString()) + '</strong></div>' +
-        '<div class="summary-item total"><span>NET PROFIT</span><strong>' + (finalNetProfit.toLocaleString()) + '</strong></div>' +
+        '<div class="summary-item total" style="border: 1px solid #ffffff;"><span>NET PROFIT</span><strong>' + (finalNetProfit.toLocaleString()) + '</strong></div>' +
       '</div>' +
       '</body></html>';
   }

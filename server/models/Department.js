@@ -7,6 +7,7 @@ const DepartmentSchema = new mongoose.Schema(
     description: { type: String, default: '' },
     isActive: { type: Boolean, default: true },
     sequence: { type: Number, default: 0 },
+    marginDedPercent: { type: Number, default: 0 },
     showInIncomeStatement: { type: Boolean, default: true },
   },
   { timestamps: true }
