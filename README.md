@@ -72,8 +72,8 @@ http://localhost:5000
 ## Deployment
 
 ### Deploy to Heroku
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/wasidev-backups/sales-managment/tree/master)
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Itxxwasi/DWATSON-DB.git)
 
 **Or use CLI:**
 
