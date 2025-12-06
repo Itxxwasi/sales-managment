@@ -1,6 +1,6 @@
 {
   "name": "dwatson-pharmacy-dashboard",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "D.Watson Pharmacy Sales Dashboard - Complete management system",
   "main": "server/index.js",
   "type": "module",
@@ -9,7 +9,7 @@
     "dev": "node --watch server/index.js"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": "20.x"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
@@ -18,7 +18,8 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "cookie-parser": "^1.4.6"
   },
   "keywords": [
     "pharmacy",
