@@ -7,7 +7,7 @@ export const corsOptions = {
     const allowedOrigins = [
       'https://www.dwatson.online',
       'http://www.dwatson.online',
-      //'https://multifiles-testing-7a8c586ca438.herokuapp.com',
+      'https://www.dwatson.work.gd',
       'https://sales-managment-f18df154a5ee.herokuapp.com',
       'https://dwatson-db-902c7d197f9e.herokuapp.com',
     ];
