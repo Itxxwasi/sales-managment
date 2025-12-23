@@ -8,7 +8,7 @@ export const corsOptions = {
       'https://www.dwatson.online',
       'http://www.dwatson.online',
       //'https://multifiles-testing-7a8c586ca438.herokuapp.com',
-     // 'https://shopmodule-9c27ee49e041.herokuapp.com',
+      'https://sales-managment-f18df154a5ee.herokuapp.com',
       'https://dwatson-db-902c7d197f9e.herokuapp.com',
     ];
     if (allowedOrigins.includes(origin)) {
